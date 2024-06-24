@@ -23,46 +23,49 @@ public class Helper
     /// <returns>New instance of the SqlConnection class with initialize parameters</returns>
     public static SqlConnection CreateConnection() => new(_connectionString);
 
-    public static int Exec(string tsql, object? data = default, int? timeout = default)
-    {
-        using var cnn = CreateConnection();
-        cnn.Open();
-
-        return cnn.Exec(tsql, data, timeout);
-    }
+    public static int? Exec(string tsql, object? data = default, int? timeout = default) 
+        => Exec<int?>(tsql, data, timeout);
 
     public static T? Exec<T>(string tsql, object? data = default, int? timeout = default)
     {
-        using var cnn = CreateConnection();
-        cnn.Open();
+        using var connection = CreateConnection();
 
-        return cnn.Exec<T?>(tsql, data, timeout);
+        return connection.Exec<T?>(tsql, data, timeout);
     }
 
     public static IEnumerable<T?> Read<T>(string tsql, object? data = default, int? timeout = default)
     {
-        using var cnn = CreateConnection();
-        cnn.Open();
+        using var connection = CreateConnection();
 
-        return cnn.Read<T?>(tsql, data, timeout);
+        return connection.Read<T?>(tsql, data, timeout);
     }
+
+    public static async Task<int?> ExecAsync(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
+        => await ExecAsync<int?>(tsql, data, timeout, cancellationToken);
+
+    public static async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
+    {
+        using var connection = CreateConnection();
+
+        return await connection.ExecAsync<T>(tsql, data, timeout, cancellationToken);
+    }
+
+    public static async Task<IEnumerable<T?>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
+    {
+        using var connection = CreateConnection();
+
+        return await connection.ReadAsync<T?>(tsql, data, timeout);
+    }
+
+    //public static async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
+    //{
+    //    using var connection = CreateConnection();
+    //    await cnn.OpenAsync(cancellationToken);
+
+    //    return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
+    //}
 }
 
-//public static async Task<int> ExecAsync(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-//{
-//    using var cnn = CreateConnection();
-//    await cnn.OpenAsync(cancellationToken);
-
-//    return await cnn.ExecAsync(tsql, data, timeout, cancellationToken);
-//}
-
-//public static async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-//{
-//    using var cnn = CreateConnection();
-//    await cnn.OpenAsync(cancellationToken);
-
-//    return await cnn.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
-//}
 
 //public static async Task<IEnumerable<T?>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default)
 //{

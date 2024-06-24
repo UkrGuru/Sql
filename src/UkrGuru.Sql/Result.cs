@@ -31,6 +31,7 @@ public class Result
 
     public static T? Parse<T>(object? value, T? defaultValue = default) =>
         value == null || value == DBNull.Value ? defaultValue :
+        value is T t ? t :
         value is string s ? ParseS<T>(s) :
         value is JsonElement je ? je.ValueKind == JsonValueKind.Null ? defaultValue : ParseJE<T>(je) :
         Parse<T>(value);

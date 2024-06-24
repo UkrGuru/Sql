@@ -7,7 +7,7 @@ namespace SqlTests;
 
 public class GlobalTests
 {
-    public const string DbName = "SqlJsonTest";
+    public const string DbName = "SqlTests";
 
     private static string? _connectionString;
 

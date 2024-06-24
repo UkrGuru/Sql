@@ -3,8 +3,10 @@
 
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 
 namespace UkrGuru.Sql;
@@ -50,15 +52,10 @@ public static class Extens
         return values[0];
     }
 
-    public static int Exec(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
-    {
-        using var command = connection.CreateCommand(tsql, data, timeout);
-
-        return command.ExecuteNonQuery();
-    }
-
     public static T? Exec<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
     {
+        if (connection.State == ConnectionState.Closed) connection.Open();
+
         using var command = connection.CreateCommand(tsql, data, timeout);
 
         return Result.Parse<T?>(command.ExecuteScalar());
@@ -66,6 +63,8 @@ public static class Extens
 
     public static IEnumerable<T?> Read<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
     {
+        if (connection.State == ConnectionState.Closed) connection.Open();
+
         using var command = connection.CreateCommand(tsql, data, timeout);
 
         return command.Read<T>().ToList();
@@ -84,6 +83,70 @@ public static class Extens
             yield return reader.Parse<T>(result);
         }
     }
+
+    public static async Task<T?> ExecAsync<T>(this SqlConnection connection, 
+        string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
+    {
+        if (connection.State == ConnectionState.Closed) await connection.OpenAsync(cancellationToken);
+
+        using var command = connection.CreateCommand(tsql, data, timeout);
+
+        return Result.Parse<T?>(await command.ExecuteScalarAsync(cancellationToken));
+    }
+
+    public static async Task<IEnumerable<T?>> ReadAsync<T>(this SqlConnection connection,
+        string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
+    {
+        if (connection.State == ConnectionState.Closed) await connection.OpenAsync(cancellationToken);
+
+        using var command = connection.CreateCommand(tsql, data, timeout);
+
+        var items = new List<T?>();
+
+        await foreach (var item in ReadAsync<T>(command, cancellationToken))
+        {
+            items.Add(item);
+        }
+
+        return items;
+    }
+
+    public static async IAsyncEnumerable<T?> ReadAsync<T>(this SqlCommand command, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        Result? result = null;
+
+        using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess, cancellationToken);
+
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            result ??= reader.Init<T>();
+            yield return reader.Parse<T>(result);
+        }
+    }
+
+    //public static async Task<IEnumerable<T?>> Read<T>(this SqlConnection connection, 
+    //    string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
+    //{
+    //    if (connection.State == ConnectionState.Closed) await connection.OpenAsync();
+
+    //    using var command = connection.CreateCommand(tsql, data, timeout);
+
+    //    return (await command.ReadAsync<T>()).ToL;
+    //}
+
+    //public static async Task<IEnumerator<T?>> ReadAsync<T>(this SqlCommand command)
+    //{
+    //    Result? result = null;
+
+    //    using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
+
+    //    while (await reader.ReadAsync())
+    //    {
+    //        result ??= reader.Init<T>();
+
+    //        yield return reader.Parse<T>(result);
+    //    }
+    //}
 
     /// <summary>
     /// Initializes a SqlCross object based on the SqlDataReader.

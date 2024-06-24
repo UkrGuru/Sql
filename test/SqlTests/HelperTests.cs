@@ -12,23 +12,17 @@ public partial class HelperTests
 {
     public HelperTests() => Helper.ConnectionString = ConnectionString;
 
-    public static readonly TheoryData<byte[]> GetTestBytes2 = new() { Array.Empty<byte>(), TestBytes1k };
+    public static readonly TheoryData<byte[]> GetTestBytes = new() { Array.Empty<byte>(), TestBytes1k, TestBytes5k, TestBytes55k };
 
-    public static readonly TheoryData<char[]> GetTestChars2 = new() { Array.Empty<char>(), TestChars1k};
+    public static readonly TheoryData<char[]> GetTestChars = new() { Array.Empty<char>(), TestChars1k, TestChars5k, TestChars55k };
 
-    public static readonly TheoryData<string> GetTestStrings2 = new() { string.Empty, TestString1k };
-
-    public static readonly TheoryData<byte[]> GetTestBytes4 = new() { Array.Empty<byte>(), TestBytes1k, TestBytes5k, TestBytes55k };
-
-    public static readonly TheoryData<char[]> GetTestChars4 = new() { Array.Empty<char>(), TestChars1k, TestChars5k, TestChars55k };
-
-    public static readonly TheoryData<string> GetTestStrings4 = new() { string.Empty, TestString1k, TestString5k, TestString55k };
+    public static readonly TheoryData<string> GetTestStrings = new() { string.Empty, TestString1k, TestString5k, TestString55k };
 
     [Fact]
     public void CanExec_Null()
     {
-        Assert.Equal(-1, Helper.Exec("DECLARE @Num0 int = 0"));
-        Assert.Equal(1, Helper.Exec("DECLARE @Table1 TABLE(Column1 int); INSERT INTO @Table1 VALUES(1)"));
+        Helper.Exec("DECLARE @Num0 int = 0;");
+        Assert.Equal(1, Helper.Exec("DECLARE @Table1 TABLE(Column1 int); INSERT INTO @Table1 VALUES(1); SELECT @@ROWCOUNT;"));
 
         Assert.Null(Helper.Exec<bool?>("DECLARE @Num0 int = 0"));
         Assert.Null(Helper.Exec<bool?>("SELECT NULL"));
@@ -156,12 +150,12 @@ public partial class HelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestBytes2))]
-    public void CanExec_Bytes(byte[] bytes)
+    [MemberData(nameof(GetTestBytes))]
+    public void CanExec_Bytes(byte[] bytes) 
         => Assert.Equal(bytes, Helper.Exec<byte[]?>("SELECT @Data", bytes));
 
     [Theory]
-    [MemberData(nameof(GetTestBytes2))]
+    [MemberData(nameof(GetTestBytes))]
     public void CanExec_SqlBinary(byte[] bytes)
     {
         var sqlValue = new SqlBinary(bytes);
@@ -169,12 +163,12 @@ public partial class HelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestChars2))]
+    [MemberData(nameof(GetTestChars))]
     public void CanExec_Chars(char[] chars)
         => Assert.Equal(chars, Helper.Exec<char[]?>("SELECT @Data", chars));
 
     [Theory]
-    [MemberData(nameof(GetTestChars2))]
+    [MemberData(nameof(GetTestChars))]
     public void CanExec_SqlChars(char[] chars)
     {
         var sqlValue = new SqlChars(chars);
@@ -182,12 +176,12 @@ public partial class HelperTests
     }
 
     [Theory]
-    [MemberData(nameof(GetTestStrings2))]
+    [MemberData(nameof(GetTestStrings))]
     public void CanExec_String(string str)
         => Assert.Equal(str, Helper.Exec<string?>("SELECT @Data", str));
 
     [Theory]
-    [MemberData(nameof(GetTestStrings2))]
+    [MemberData(nameof(GetTestStrings))]
     public void CanExec_SqlString(string str)
     {
         var sqlValue = new SqlString(str);
@@ -205,12 +199,22 @@ public partial class HelperTests
         Assert.NotNull(rec1);
         Assert.Equal(1, (int?)rec1["Id"]);
         Assert.Equal("John", (string?)rec1["Name"]);
+
+        var items = Helper.Exec<List<JsonObject>>("SELECT 1 Id, 'Name1' Name UNION ALL SELECT 2, 'Name2' FOR JSON PATH");
+        Assert.NotNull(items);
+        Assert.NotEmpty(items);
+        Assert.NotNull(items[0]);
+        Assert.Equal(1, (int?)items[0]["Id"]);
+        Assert.Equal("Name1", (string?)items[0]["Name"]);
+        Assert.NotNull(items[1]);
+        Assert.Equal(2, (int?)items[1]["Id"]);
+        Assert.Equal("Name2", (string?)items[1]["Name"]);
     }
 
     [Fact]
     public void CanExec_Crud()
     {
-        var item1 = new { Name = "HelperName1" };
+        var item1 = new { Name = "Name1" };
 
         var id = Helper.Exec<int?>("INSERT INTO TestItems (Name) OUTPUT INSERTED.Id VALUES (@Name)", new { item1.Name });
         Assert.NotNull(id);
@@ -222,10 +226,10 @@ public partial class HelperTests
         Assert.Null(item2?.Date);
 
         Assert.NotNull(item2);
-        item2.Name = "HelperName2";
+        item2.Name = "Name2";
         item2.Date = DateTime.Today;
 
-        Helper.Exec("UPDATE TestItems SET Name = @Name, Date = @Date WHERE Id = @Id", new { item2.Id, item2.Name, item2.Date });
+        Helper.Exec<int?>("UPDATE TestItems SET Name = @Name, Date = @Date WHERE Id = @Id", new { item2.Id, item2.Name, item2.Date });
 
         var item3 = Helper.Read<Item>("SELECT * FROM TestItems WHERE Id = @Data", id).FirstOrDefault();
         Assert.NotNull(item3);
@@ -233,10 +237,23 @@ public partial class HelperTests
         Assert.Equal(item2.Name, item3.Name);
         Assert.Equal(DateTime.Today, item3.Date);
 
-        var count = Helper.Exec("DELETE TestItems WHERE Id = @Data", id);
+        var count = Helper.Exec<int?>("DELETE TestItems WHERE Id = @Data; SELECT @@ROWCOUNT;", id);
         Assert.Equal(1, count);
 
         var item4 = Helper.Read<Item>("SELECT * FROM TestItems WHERE Id = @Data", id).FirstOrDefault();
         Assert.Null(item4);
+
+        var items = Helper.Read<Item>("SELECT 1 Id, 'Name1' Name UNION ALL SELECT 2, 'Name2'").ToList();
+        Assert.NotEmpty(items);
+        Assert.NotNull(items[0]);
+        Assert.Equal(1, items[0]?.Id);
+        Assert.Equal("Name1", items[0]?.Name);
+        Assert.NotNull(items[1]);
+        Assert.Equal(2, items[1]?.Id);
+        Assert.Equal("Name2", items[1]?.Name);
     }
 }
+
+//var id = Helper.Exec("INSERT INTO InputVarBinary (Data) OUTPUT INSERTED.Id VALUES (@Data)", bytes);
+//var actial = Helper.Exec<byte[]?>("SELECT Data FROM InputVarBinary WHERE ID = @Data", id);
+//Assert.Equal(bytes, actial);
