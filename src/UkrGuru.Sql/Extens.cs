@@ -6,7 +6,6 @@ using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Xml;
 
 namespace UkrGuru.Sql;
@@ -124,30 +123,6 @@ public static class Extens
         }
     }
 
-    //public static async Task<IEnumerable<T?>> Read<T>(this SqlConnection connection, 
-    //    string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-    //{
-    //    if (connection.State == ConnectionState.Closed) await connection.OpenAsync();
-
-    //    using var command = connection.CreateCommand(tsql, data, timeout);
-
-    //    return (await command.ReadAsync<T>()).ToL;
-    //}
-
-    //public static async Task<IEnumerator<T?>> ReadAsync<T>(this SqlCommand command)
-    //{
-    //    Result? result = null;
-
-    //    using SqlDataReader reader = await command.ExecuteReaderAsync(CommandBehavior.SequentialAccess);
-
-    //    while (await reader.ReadAsync())
-    //    {
-    //        result ??= reader.Init<T>();
-
-    //        yield return reader.Parse<T>(result);
-    //    }
-    //}
-
     /// <summary>
     /// Initializes a SqlCross object based on the SqlDataReader.
     /// </summary>
@@ -204,80 +179,3 @@ public static class Extens
         return type.Name.Contains("AnonymousType");
     }
 }
-
-
-//public static T? Exec<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default,
-//    CommandBehavior behavior = CommandBehavior.SingleResult)
-//{
-//    using var command = connection.CreateSqlCommand(tsql, data, timeout);
-
-//    switch (behavior)
-//    {
-//        case CommandBehavior.Default:
-//            return SqlResult.Parse<T?>(command.ExecuteNonQuery());
-
-//        case CommandBehavior.SingleResult:
-//            return SqlResult.Parse<T?>(command.ExecuteScalar());
-
-//        case CommandBehavior.SingleRow:
-//            return command.Read<T>().FirstOrDefault();
-
-//        case CommandBehavior.SequentialAccess:
-//        case CommandBehavior.CloseConnection:
-//            using (SqlDataReader reader = command.ExecuteReader(behavior))
-//            {
-//                return (T?)reader.ReadAll<T>();
-//            }
-
-//        default:
-//            return default;
-//    }
-//}
-
-//public static object? ReadAll<T>(this SqlDataReader reader)
-//    => reader.Read() && !reader.IsDBNull(0) ? reader.ReadObj<T>() : default(T);
-
-//public static object? ReadObj<T>(this SqlDataReader reader) => typeof(T).Name switch
-//{
-//    "Byte[]" => reader[0],
-//    "Char[]" => reader.GetSqlChars(0).Value,
-//    nameof(Stream) => reader.GetStream(0),
-//    nameof(SqlBinary) => reader.GetSqlBinary(0),
-//    nameof(SqlBytes) => reader.GetSqlBytes(0),
-//    nameof(SqlXml) => reader.GetSqlXml(0),
-//    nameof(SqlChars) => reader.GetSqlChars(0),
-//    nameof(TextReader) => reader.GetTextReader(0),
-//    nameof(XmlReader) => reader.GetXmlReader(0),
-//    _ => JsonSerializer.Deserialize<T?>(reader.ReadMore()),
-//};
-
-//public static string ReadMore(this SqlDataReader reader)
-//{
-//    StringBuilder sb = new();
-
-//    do { sb.Append(reader.GetValue(0)); } while (reader.Read());
-
-//    return sb.ToString();
-//}
-
-//public static Task<int> ExecAsync(this SqlConnection connection, string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-//{
-//    using var command = connection.CreateCommand(tsql, data, timeout);
-
-//    return command.ExecuteNonQueryAsync(cancellationToken);
-//}
-
-//public static Task<T?> ExecAsync<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-//{
-//    using var command = connection.CreateCommand(tsql, data, timeout);
-
-//    return Task.FromResult(Result.Parse<T?>(command.ExecuteScalarAsync(cancellationToken)));
-//}
-
-//public static Task<IEnumerable<T?>> ReadAsync<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
-//{
-//    using var command = connection.CreateCommand(tsql, data, timeout);
-
-//    return Task.FromResult(command.ReadAsync<T?>());
-//}
-

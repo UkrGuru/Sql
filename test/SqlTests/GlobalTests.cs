@@ -102,14 +102,6 @@ public class GlobalTests
         public DateTime? Date { get; set; }
     }
 
-    //public class Event
-    //{
-    //    public int Id { get; set; }
-    //    public string? Name { get; set; }
-    //    public DateTime? Date { get; set; }
-    //    public string? Venue { get; set; }
-    //}
-
     public enum UserType
     {
         Guest,

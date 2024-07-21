@@ -23,7 +23,7 @@ public class Helper
     /// <returns>New instance of the SqlConnection class with initialize parameters</returns>
     public static SqlConnection CreateConnection() => new(_connectionString);
 
-    public static int? Exec(string tsql, object? data = default, int? timeout = default) 
+    public static int? Exec(string tsql, object? data = default, int? timeout = default)
         => Exec<int?>(tsql, data, timeout);
 
     public static T? Exec<T>(string tsql, object? data = default, int? timeout = default)
@@ -54,73 +54,6 @@ public class Helper
     {
         using var connection = CreateConnection();
 
-        return await connection.ReadAsync<T?>(tsql, data, timeout);
+        return await connection.ReadAsync<T?>(tsql, data, timeout, cancellationToken);
     }
-
-    //public static async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-    //{
-    //    using var connection = CreateConnection();
-    //    await cnn.OpenAsync(cancellationToken);
-
-    //    return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
-    //}
-}
-
-
-//public static async Task<IEnumerable<T?>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default)
-//{
-//    using var cnn = CreateConnection();
-
-//    return await cnn.ReadAsync<T?>(tsql, data, timeout);
-//}
-
-///// <summary>
-///// 
-///// </summary>
-///// <typeparam name="T"></typeparam>
-///// <param name="tsql"></param>
-///// <param name="data"></param>
-///// <param name="timeout"></param>
-///// <returns></returns>
-//public static T? Create<T>(string tsql, object? data = default, int? timeout = default)
-//{
-//    return default;
-//}
-
-///// <summary>
-///// 
-///// </summary>
-///// <typeparam name="T"></typeparam>
-///// <param name="tsql"></param>
-///// <param name="data"></param>
-///// <param name="timeout"></param>
-///// <returns></returns>
-//public static IEnumerable<T> Read<T>(string tsql, object? data = default, int? timeout = default)
-//{
-//    return Array.Empty<T>();
-//}
-
-///// <summary>
-///// 
-///// </summary>
-///// <typeparam name="T"></typeparam>
-///// <param name="tsql"></param>
-///// <param name="data"></param>
-///// <param name="timeout"></param>
-///// <returns></returns>
-//public static T? Update<T>(string tsql, object? data = default, int? timeout = default)
-//{
-//    return default;
-//}
-
-///// <summary>
-///// 
-///// </summary>
-///// <param name="tsql"></param>
-///// <param name="data"></param>
-///// <param name="timeout"></param>
-///// <returns></returns>
-//public static int Delete(string tsql, object? data = default, int? timeout = default)
-//{
-//    return 0;
-//}
+}   

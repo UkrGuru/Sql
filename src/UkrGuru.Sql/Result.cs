@@ -46,7 +46,8 @@ public class Result
 
     static T? ParseJE<T>(JsonElement value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
     {
-        Type t when t == typeof(string) => ParseS<T>(value.ValueKind == JsonValueKind.String ? value.GetString()! : value.GetRawText().Trim('"')),
+        Type t when t == typeof(string) => ParseS<T>(value.ValueKind == JsonValueKind.String ? 
+            value.GetString()! : value.GetRawText().Trim('"')),
         _ => value.Deserialize<T>()
     };
 
