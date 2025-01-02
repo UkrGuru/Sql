@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageId>UkrGuru.Sql</PackageId>
+        <AssemblyName>UkrGuru.Sql</AssemblyName>
+        <RootNamespace>UkrGuru</RootNamespace>
+        <Company>PE VIKTOR Oleksandr Oleksandrovych</Company>
+        <Authors>UkrGuru</Authors>
+        <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
+        <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
+        <Version>1.0.0-beta1</Version>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageIcon>ukrguru-logo.jpg</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Description>UkrGuru.Sql is a library that simplifies the interaction between .NET applications and SQL Server databases.</Description>
+        <SignAssembly>True</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DebugType>full</DebugType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DebugType>full</DebugType>
+    </PropertyGroup>
+    
+    <ItemGroup>
+      <Compile Remove="Resources\**" />
+      <EmbeddedResource Remove="Resources\**" />
+      <None Remove="Resources\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="..\LICENSE.txt">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\ukrguru-logo.jpg">
+            <Pack>True</Pack>
+            <PackagePath></PackagePath>
+        </EmbeddedResource>
+        <EmbeddedResource Include="..\README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.0-preview3.24332.3" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+    </ItemGroup>
+</Project>
