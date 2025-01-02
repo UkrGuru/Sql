@@ -38,9 +38,4 @@ builder.Services.AddScoped<IDbService, DbService>();;
 var app = builder.Build();
 ```
 
-## Samples of code
-
-```c#
-
-
-```
+## See more samples in demos folder
