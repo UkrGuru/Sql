@@ -12,12 +12,12 @@ namespace UkrGuru.Sql;
 
 public static class Extens
 {
-    public static void AddData(this SqlParameterCollection parameters, object? data)
+    public static void AddData(this SqlParameterCollection parameters, object data)
     {
         switch (data)
         {
-            case null:
-                break;
+            //case null:
+            //    break;
 
             case SqlParameter sqlParameter:
                 parameters.Add(sqlParameter);
