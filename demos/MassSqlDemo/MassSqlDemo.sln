@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mass_Ins_Upd_Del", "Mass_Ins_Upd_Del\Mass_Ins_Upd_Del.csproj", "{E00E7B3D-6D1D-4AB6-8635-32895462C5C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MassSqlDemo", "MassSqlDemo.csproj", "{E00E7B3D-6D1D-4AB6-8635-32895462C5C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

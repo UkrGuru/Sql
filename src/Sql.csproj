@@ -1,37 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <PackageId>UkrGuru.Sql</PackageId>
         <AssemblyName>UkrGuru.Sql</AssemblyName>
-        <RootNamespace>UkrGuru</RootNamespace>
+        <RootNamespace>UkrGuru.Sql</RootNamespace>
+        <SignAssembly>True</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
         <Company>PE VIKTOR Oleksandr Oleksandrovych</Company>
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.0.0-beta1</Version>
+        <Version>1.0.0-beta2</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>UkrGuru.Sql is a library that simplifies the interaction between .NET applications and SQL Server databases.</Description>
-        <SignAssembly>True</SignAssembly>
-        <AssemblyOriginatorKeyFile>..\..\UkrGuru.snk</AssemblyOriginatorKeyFile>
+        <RepositoryUrl>https://github.com/UkrGuru/Sql</RepositoryUrl>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-      <DebugType>full</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DebugType>full</DebugType>
-    </PropertyGroup>
-    
-    <ItemGroup>
-      <Compile Remove="Resources\**" />
-      <EmbeddedResource Remove="Resources\**" />
-      <None Remove="Resources\**" />
-    </ItemGroup>
-
+   
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE.txt">
             <Pack>True</Pack>
