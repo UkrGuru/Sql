@@ -42,30 +42,6 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
    var app = builder.Build();
    ```
 
-## Usage
-
-Here's a basic example of how to use UkrGuru.Sql in your project:
-
-```csharp
-using UkrGuru.Sql;
-
-public class MyService
-{
-    private readonly IDbService _dbService;
-
-    public MyService(IDbService dbService)
-    {
-        _dbService = dbService;
-    }
-
-    public async Task<IEnumerable<MyModel>> GetDataAsync()
-    {
-        var query = "SELECT * FROM MyTable";
-        return await _dbService.ReadAsync<MyModel>(query);
-    }
-}
-```
-
 ## Samples
 
 You can find more examples in the `demos` folder of this repository.
