@@ -2,40 +2,78 @@
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.Sql)](https://www.nuget.org/packages/UkrGuru.Sql/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
 
-UkrGuru.Sql is a library that makes it easy to interact between .NET applications and SQL Server databases. UkrGuru.Sql automatically normalizes input parameters and deserializes the result. Supports dynamic queries, stored procedures and asynchronous operations. With the UkrGuru.Sql package, you can access SQL Server data with minimal code and maximum performance.
+UkrGuru.Sql is a powerful library designed to simplify interactions between .NET applications and SQL Server databases. It automatically normalizes input parameters and deserializes results, supporting dynamic queries, stored procedures, and asynchronous operations. With UkrGuru.Sql, you can access SQL Server data with minimal code and maximum performance.
+
+## Features
+
+- **Easy Integration**: Seamlessly integrate with ASP.NET Core projects.
+- **Dynamic Queries**: Support for dynamic SQL queries and stored procedures.
+- **Asynchronous Operations**: Built-in support for async operations.
+- **Parameter Normalization**: Automatic normalization of input parameters.
+- **Result Deserialization**: Effortless deserialization of query results.
 
 ## Installation
 
-To use UkrGuru Sql library in your ASP.NET Core project, you need to follow these steps:
+To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 
-### 1. Install the UkrGuru.Sql package from NuGet.
+1. Install the UkrGuru.Sql package from NuGet:
+   ```sh
+   dotnet add package UkrGuru.Sql
+   ```
 
-### 2. Open the AppSettings.json files and add the "UkrGuru.Sql" package and "DefaultConnection" elements.
+2. Update your `appsettings.json` file to include the connection string:
+   ```json
+   {
+     "ConnectionStrings": {
+       "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=YourDbName;Trusted_Connection=True;"
+     }
+   }
+   ```
 
-```json
+3. Register the UkrGuru.Sql services in your `Program.cs` file:
+   ```csharp
+   using UkrGuru.Sql;
+
+   var builder = WebApplication.CreateBuilder(args);
+   builder.Services.AddScoped<IDbService, DbService>();
+
+   DbHelper.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+   var app = builder.Build();
+   ```
+
+## Usage
+
+Here's a basic example of how to use UkrGuru.Sql in your project:
+
+```csharp
+using UkrGuru.Sql;
+
+public class MyService
 {
-    ***
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=YourDbName;Trusted_Connection=True;"
-  }
-    ***
+    private readonly IDbService _dbService;
+
+    public MyService(IDbService dbService)
+    {
+        _dbService = dbService;
+    }
+
+    public async Task<IEnumerable<MyModel>> GetDataAsync()
+    {
+        var query = "SELECT * FROM MyTable";
+        return await _dbService.ReadAsync<MyModel>(query);
+    }
 }
 ```
 
-### 2. Open the Program.cs file and register the UkrGuru.Sql services and extensions:
+## Samples
 
-```c#
-using UkrGuru.Sql;
+You can find more examples in the `demos` folder of this repository.
 
-DbHelper.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+## Contributing
 
-var builder = WebApplication.CreateBuilder(args);
+Contributions are welcome! Please fork this repository and submit pull requests.
 
-builder.Services.AddScoped<IDbService, DbService>();;
+## License
 
-// More other services here ... 
-
-var app = builder.Build();
-```
-
-## See more samples in demos folder
+This project is licensed under the MIT License. See the LICENSE file for details.
