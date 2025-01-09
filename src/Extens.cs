@@ -191,5 +191,5 @@ public static class Extens
         return item;
     }
 
-    public static string ToJson(this object value) => JsonSerializer.Serialize(value);
+    public static string ToJson(this object value, JsonSerializerOptions? options = null) => JsonSerializer.Serialize(value, options);
 }

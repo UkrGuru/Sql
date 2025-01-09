@@ -11,7 +11,7 @@
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.0.0-beta2</Version>
+        <Version>1.0.0-beta3</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
@@ -21,7 +21,7 @@
     </PropertyGroup>
    
     <ItemGroup>
-        <EmbeddedResource Include="..\LICENSE.txt">
+        <EmbeddedResource Include="..\LICENSE">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </EmbeddedResource>
