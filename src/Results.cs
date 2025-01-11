@@ -9,11 +9,36 @@ namespace UkrGuru.Sql
 {
     public class Results
     {
-        public PropertyInfo[] Props { get; set; } = Array.Empty<PropertyInfo>();
+        public PropertyInfo[] Props { get; set; } = [];
 
-        public int[] Indexes { get; set; } = Array.Empty<int>();
+        public int[] Indexes { get; set; } = [];
 
-        public object[] Values { get; set; } = Array.Empty<object>();
+        public object[] Values { get; set; } = [];
+
+        public static object? Parse(object? value) => value == DBNull.Value ? default : value;
+
+        public static T? Parse<T>(object? value, T? defaultValue = default) => value switch
+        {
+            null => defaultValue,
+            DBNull => defaultValue,
+            T t => (T?)t,
+            JsonElement je => je.ValueKind == JsonValueKind.Null ? defaultValue : ParseJE<T>(je),
+            _ => Parse<T>(value)
+        };
+
+        private static T? Parse<T>(object value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
+        {
+            Type t when TypeParsers.TryGetValue(t, out var parser) => (T?)parser(value),
+            Type t when t.IsEnum => (T)Enum.Parse(t, Convert.ToString(value)!),
+            Type t when t.IsClass => JsonSerializer.Deserialize<T>(value.ToString()!),
+            Type t => (T?)Convert.ChangeType(value, t, CultureInfo.InvariantCulture)
+        };
+
+        private static T? ParseJE<T>(JsonElement value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
+        {
+            Type t when t == typeof(string) => Parse<T>(value.ValueKind == JsonValueKind.String ? value.GetString()! : value.GetRawText().Trim('"')),
+            _ => value.Deserialize<T>()
+        };
 
         private static readonly Dictionary<Type, Func<object, object?>> TypeParsers = new()
         {
@@ -27,32 +52,6 @@ namespace UkrGuru.Sql
             { typeof(DateTimeOffset), value => new DateTimeOffset(Convert.ToDateTime(value)) },
             { typeof(TimeOnly), value => TimeOnly.Parse(value.ToString()!) },
             { typeof(TimeSpan), value => TimeSpan.ParseExact(value.ToString()!, "c", null) }
-        };
-
-        public static object? Parse(object? value) => value == DBNull.Value ? default : value;
-
-        public static T? Parse<T>(object? value, T? defaultValue = default) => value switch
-        {
-            null => defaultValue,
-            DBNull => defaultValue,
-            T t => (T?)t,
-            Guid g => (T?)(object)g.ToString(),
-            JsonElement je => je.ValueKind == JsonValueKind.Null ? defaultValue : ParseJE<T>(je),
-            _ => Parse<T>(value)
-        };
-
-        private static T? Parse<T>(object value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
-        {
-            Type t when TypeParsers.TryGetValue(t, out var parser) => (T?)parser(value),
-            Type t when t.IsEnum => (T)Enum.Parse(t, Convert.ToString(value)!),
-            Type t when t.IsClass => JsonSerializer.Deserialize<T?>(value.ToString()!),
-            Type t => (T?)Convert.ChangeType(value, t, CultureInfo.InvariantCulture)
-        };
-
-        private static T? ParseJE<T>(JsonElement value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
-        {
-            Type t when t == typeof(string) => Parse<T>(value.ValueKind == JsonValueKind.String ? value.GetString()! : value.GetRawText().Trim('"')),
-            _ => value.Deserialize<T>()
         };
     }
 }
