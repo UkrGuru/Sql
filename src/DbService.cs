@@ -37,7 +37,7 @@ public class DbService : IDbService
     {
         using var connection = CreateConnection();
 
-        return await connection.ExecAsync<T>(tsql, data, timeout, cancellationToken);
+        return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
     }
 
     public async Task<IEnumerable<T>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)

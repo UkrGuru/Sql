@@ -192,4 +192,28 @@ public static class Extens
     }
 
     public static string ToJson(this object value, JsonSerializerOptions? options = null) => JsonSerializer.Serialize(value, options);
+
+    public static async Task<string?> TryExecAsync(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return Convert.ToString(await db.ExecAsync(proc, data));
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
+
+    public static async Task<string?> TryExecAsync<T>(this IDbService db, string proc, string? data = default)
+    {
+        try
+        {
+            return await db.ExecAsync<string?>(proc, data);
+        }
+        catch (Exception ex)
+        {
+            return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
+        }
+    }
 }

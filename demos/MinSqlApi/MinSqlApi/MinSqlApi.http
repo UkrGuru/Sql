@@ -1,0 +1,23 @@
+@MinSqlApi_HostAddress = http://localhost:5133
+
+### POST request to execute a stored procedure
+POST {{MinSqlApi_HostAddress}}/ApiHole/{proc}
+Content-Type: text/plain
+
+{
+  "data": "your_data_here"
+}
+
+### GET request to execute a stored procedure
+GET {{MinSqlApi_HostAddress}}/ApiHole/{proc}?data=your_data_here
+
+### PUT request to execute a stored procedure
+PUT {{MinSqlApi_HostAddress}}/ApiHole/{proc}
+Content-Type: text/plain
+
+{
+  "data": "your_data_here"
+}
+
+### DELETE request to execute a stored procedure
+DELETE {{MinSqlApi_HostAddress}}/ApiHole/{proc}?data=your_data_here

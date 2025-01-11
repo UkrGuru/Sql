@@ -11,9 +11,9 @@
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.0.0-beta3</Version>
+        <Version>1.0.0-beta4</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>UkrGuru.Sql is a library that simplifies the interaction between .NET applications and SQL Server databases.</Description>
