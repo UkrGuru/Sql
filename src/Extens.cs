@@ -155,9 +155,7 @@ public static class Extens
 
     public static Results Init<T>(this SqlDataReader reader)
     {
-        Results result = new();
-
-        result.Props = typeof(T).GetProperties();
+        Results result = new() { Props = typeof(T).GetProperties() };
 
         int fieldCount = reader.FieldCount;
         var names = new string[fieldCount];
@@ -176,7 +174,7 @@ public static class Extens
 
     public static T Parse<T>(this SqlDataReader reader, Results results)
     {
-        T item = (T)Activator.CreateInstance(typeof(T))!;
+        T item = Activator.CreateInstance<T>();
 
         int fieldCount = reader.GetValues(results.Values);
 

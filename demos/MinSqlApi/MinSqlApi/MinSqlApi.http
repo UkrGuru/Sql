@@ -1,23 +1,25 @@
 @MinSqlApi_HostAddress = http://localhost:5133
 
 ### POST request to execute a stored procedure
-POST {{MinSqlApi_HostAddress}}/ApiHole/{proc}
-Content-Type: text/plain
+POST {{MinSqlApi_HostAddress}}/ApiHole/Shippers_Ins
+Content-Type: application/json
 
-{
-  "data": "your_data_here"
+{ 
+  "CompanyName":"Nova Poshta",  
+  "Phone":"(800) 111-1111" 
 }
 
 ### GET request to execute a stored procedure
-GET {{MinSqlApi_HostAddress}}/ApiHole/{proc}?data=your_data_here
+GET {{MinSqlApi_HostAddress}}/ApiHole/Shippers_Get?data=Nova%20Poshta
 
 ### PUT request to execute a stored procedure
-PUT {{MinSqlApi_HostAddress}}/ApiHole/{proc}
-Content-Type: text/plain
+PUT {{MinSqlApi_HostAddress}}/ApiHole/Shippers_Upd
+Content-Type: application/json
 
-{
-  "data": "your_data_here"
+{ 
+  "CompanyName":"Nova Poshta",  
+  "Phone":"(800) 222-2222" 
 }
 
 ### DELETE request to execute a stored procedure
-DELETE {{MinSqlApi_HostAddress}}/ApiHole/{proc}?data=your_data_here
+DELETE {{MinSqlApi_HostAddress}}/ApiHole/Shippers_Del?data=Nova%20Poshta

@@ -45,13 +45,10 @@ namespace UkrGuru.Sql
             { typeof(byte[]), value => Convert.FromBase64String(value.ToString()!) },
             { typeof(char[]), value => value.ToString()!.ToCharArray() },
             { typeof(string), value => value.ToJson().Trim('"') },
-            { typeof(char), value => value.ToString()![0] },
             { typeof(Guid), value => Guid.Parse(value.ToString()!) },
             { typeof(DateOnly), value => DateOnly.FromDateTime(Convert.ToDateTime(value)) },
-            { typeof(DateTime), value => Convert.ToDateTime(value) },
             { typeof(DateTimeOffset), value => new DateTimeOffset(Convert.ToDateTime(value)) },
             { typeof(TimeOnly), value => TimeOnly.Parse(value.ToString()!) },
-            { typeof(TimeSpan), value => TimeSpan.ParseExact(value.ToString()!, "c", null) }
         };
     }
 }

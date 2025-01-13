@@ -8,10 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Sql.csproj" />
+    <PackageReference Include="UkrGuru.Sql" Version="1.0.0-beta5" />
   </ItemGroup>
 
 </Project>
