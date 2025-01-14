@@ -163,8 +163,3 @@ DELETE {{MinSqlApi_HostAddress}}/ApiHole/Shippers_Del?data=Nova%20Poshta
 ### Conclusion
 
 By following these steps, you've created a versatile API that can handle various HTTP methods to execute stored procedures. This setup provides a solid foundation for building more complex and feature-rich APIs in the future.
-
-Feel free to customize this article further to suit your needs! If you have any questions or need additional help, just let me know.
-
-For more details, you can check the source code here.
-https://github.com/UkrGuru/Sql/blob/main/demos/MinSqlApi/MinSqlApi/Program.cs
