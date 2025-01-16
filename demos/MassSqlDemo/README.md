@@ -109,8 +109,8 @@ Deleted 20K - 00:00:00.0400413
 Using `UkrGuru.Sql` for bulk operations significantly improves performance when handling large datasets. By leveraging JSON parsing and efficient SQL commands, we can perform mass inserts, updates, and deletes with minimal execution time. The results demonstrate the efficiency of this approach:
 
 - **Database created successfully.**
-- **Inserted 100K - 00:00:00.4206026**
-- **Updated 100K - 00:00:00.3418457**
-- **Deleted 20K - 00:00:00.0400413**
+- **Inserted 100K - 00:00:00.4299062**
+- **Updated 100K - 00:00:00.3343855**
+- **Deleted 20K - 00:00:00.0399534**
 
 This method ensures that large-scale data operations are handled swiftly and effectively, making it an excellent choice for high-performance applications.
