@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
-        <ImplicitUsings>enable</ImplicitUsings>
+        <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>UkrGuru.Sql</AssemblyName>
         <RootNamespace>UkrGuru.Sql</RootNamespace>
@@ -11,7 +11,7 @@
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.0.1</Version>
+        <Version>1.1.1-beta1</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
@@ -20,18 +20,18 @@
         <RepositoryUrl>https://github.com/UkrGuru/Sql</RepositoryUrl>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
-      <DebugType>portable</DebugType>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0|AnyCPU'">
-      <DebugType>portable</DebugType>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
-      <DebugType>none</DebugType>
+        <DebugType>none</DebugType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0|AnyCPU'">
-      <DebugType>none</DebugType>
+        <DebugType>none</DebugType>
     </PropertyGroup>
-  
+
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE">
             <Pack>True</Pack>

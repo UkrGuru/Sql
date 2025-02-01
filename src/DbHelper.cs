@@ -2,6 +2,9 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace UkrGuru.Sql;
 
