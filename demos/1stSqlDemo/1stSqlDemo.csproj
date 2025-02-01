@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UkrGuru.Sql" Version="1.0.1" />
+    <PackageReference Include="UkrGuru.Sql" Version="1.1.1" />
   </ItemGroup>
 
 </Project>
