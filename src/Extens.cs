@@ -2,16 +2,16 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
-using System;
 using System.Collections.Generic;
+using System;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Xml;
 
 namespace UkrGuru.Sql;
@@ -22,8 +22,8 @@ public static class Extens
     {
         switch (data)
         {
-            //case null:
-            //    break;
+            case null:
+                break;
 
             case SqlParameter sqlParameter:
                 parameters.Add(sqlParameter);
@@ -34,19 +34,13 @@ public static class Extens
                 break;
 
             default:
-                {
-                    SqlParameter parameter = new("@Data", data);
-                    if (parameter.SqlValue is null && data is not Enum && data is not Stream && data is not TextReader && data is not XmlReader)
-                    {
-                        parameters.AddRange((from prop in data.GetType().GetProperties()
-                                             select new SqlParameter("@" + prop.Name, prop.GetValue(data) ?? DBNull.Value)).ToArray());
-                    }
-                    else
-                    {
-                        parameters.Add(parameter);
-                    }
-                    break;
-                }
+                SqlParameter parameter = new("@Data", data);
+                if (parameter.SqlValue is null && data is not Enum && data is not Stream && data is not TextReader && data is not XmlReader)
+                    parameters.AddRange((from prop in data.GetType().GetProperties()
+                                         select new SqlParameter("@" + prop.Name, prop.GetValue(data) ?? DBNull.Value)).ToArray());
+                else
+                    parameters.Add(parameter);
+                break;
         }
     }
 
@@ -82,9 +76,6 @@ public static class Extens
         using var command = connection.CreateCommand(tsql, data, timeout);
 
         return Results.Parse<T?>(command.ExecuteScalar());
-
-        //if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(IEnumerable<>))
-        //    return (T?)(object?)command.Read<T>().ToList();
     }
 
     public static IEnumerable<T> Read<T>(this SqlCommand command)
@@ -126,6 +117,7 @@ public static class Extens
         if (connection.State == ConnectionState.Closed) await connection.OpenAsync(cancellationToken);
 
         using var command = connection.CreateCommand(tsql, data, timeout);
+
         return Results.Parse<T?>(await command.ExecuteScalarAsync(cancellationToken));
     }
 
