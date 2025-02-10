@@ -44,6 +44,8 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 
 ## Samples
 
+![UkrGuru.Sql Easy](/assets/224.png)
+
 You can find more examples in the `demos` folder of this repository.
 
 ## Contributing
