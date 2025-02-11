@@ -50,14 +50,24 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 
 ```csharp
 using UkrGuru.Sql;
+
 DbHelper.ConnectionString = "Server=(localdb)\\mssqllocaldb";
 
 var result = DbHelper.Exec<int>("SELECT @A + @B", new { A = 2, B = 2 });
 Console.WriteLine($"Result: {result}");
 
-var person = new { FirstName = "Json", LastName = "Smith", Birthday = "2000-02-02" };
+var person = new Person() { Id = 1, Name = "John" };
 var isJson = DbHelper.Exec<bool>("SELECT CAST(ISJSON(@Data) as bit)", person.ToJson());
 Console.WriteLine($"Result: {isJson}");
+
+var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name").ToList();
+Console.WriteLine($"Result: {persons.Count}");
+
+class Person
+{
+    public int? Id { get; set; }
+    public string? Name { get; set; }
+}
 ```
 
 You can find more examples in the `demos` folder of this repository.
