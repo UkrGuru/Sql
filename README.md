@@ -31,6 +31,7 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
    ```
 
 3. Register the UkrGuru.Sql services in your `Program.cs` file:
+
    ```csharp
    using UkrGuru.Sql;
    
@@ -47,7 +48,15 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 
 ## Samples
 
-![UkrGuru.Sql Easy](/assets/224.png)
+```csharp
+using UkrGuru.Sql;
+
+DbHelper.ConnectionString = "Server=(localdb)\\mssqllocaldb";
+
+var result = DbHelper.Exec("SELECT @A + @B", new { A = 2, B = 2 });
+
+Console.WriteLine($"Result: {result}");
+```
 
 You can find more examples in the `demos` folder of this repository.
 
