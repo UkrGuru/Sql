@@ -53,7 +53,7 @@ using UkrGuru.Sql;
 
 DbHelper.ConnectionString = "Server=(localdb)\\mssqllocaldb";
 
-var result = DbHelper.Exec("SELECT @A + @B", new { A = 2, B = 2 });
+var result = DbHelper.Exec<int>("SELECT @A + @B", new { A = 2, B = 2 });
 
 Console.WriteLine($"Result: {result}");
 ```
