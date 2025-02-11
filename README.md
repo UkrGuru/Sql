@@ -62,6 +62,8 @@ Console.WriteLine($"Result: {json}");
 
 var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name").ToList();
 Console.WriteLine($"Result: {persons.Count}");
+Console.WriteLine($"1st person: {persons[0].ToJson()}");
+Console.WriteLine($"2nd person: {persons[1].ToJson()}");
 
 class Person
 {
