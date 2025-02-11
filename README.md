@@ -60,7 +60,7 @@ var person = new Person() { Id = 1, Name = "John" };
 var isJson = DbHelper.Exec<bool>("SELECT CAST(ISJSON(@Data) as bit)", person.ToJson());
 Console.WriteLine($"Result: {isJson}");
 
-var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name").ToList();
+var persons = DbHelper.Read<Person>("SELECT 1 AS Id, 'John' AS Name UNION ALL SELECT 2, 'Mike'").ToList();
 Console.WriteLine($"Result: {persons.Count}");
 
 class Person
