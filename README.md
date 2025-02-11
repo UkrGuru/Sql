@@ -56,11 +56,11 @@ DbHelper.ConnectionString = "Server=(localdb)\\mssqllocaldb";
 var result = DbHelper.Exec<int>("SELECT @A + @B", new { A = 2, B = 2 });
 Console.WriteLine($"Result: {result}");
 
-var person = new Person() { Id = 1, Name = "John" };
+var person = new Person { Id = 1, Name = "John" };
 var isJson = DbHelper.Exec<bool>("SELECT CAST(ISJSON(@Data) as bit)", person.ToJson());
 Console.WriteLine($"Result: {isJson}");
 
-var persons = DbHelper.Read<Person>("SELECT 1 AS Id, 'John' AS Name UNION ALL SELECT 2, 'Mike'").ToList();
+var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name").ToList();
 Console.WriteLine($"Result: {persons.Count}");
 
 class Person
