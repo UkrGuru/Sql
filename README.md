@@ -33,12 +33,15 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 3. Register the UkrGuru.Sql services in your `Program.cs` file:
    ```csharp
    using UkrGuru.Sql;
-
-   var builder = WebApplication.CreateBuilder(args);
-   builder.Services.AddScoped<IDbService, DbService>();
-
+   
+   // Set connection string for static use
    DbHelper.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+   var builder = WebApplication.CreateBuilder(args);
+
+   // Register DbService for dependency injection as a scoped service
+   builder.Services.AddScoped<IDbService, DbService>();
+      
    var app = builder.Build();
    ```
 
