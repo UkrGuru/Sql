@@ -60,7 +60,7 @@ var person = new { Id = 1, Name = "John" };
 var json = DbHelper.Exec<string>("SELECT @Data", person.ToJson());
 Console.WriteLine($"Result: {json}");
 
-var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2 Id, 'Mike' Name").ToList();
+var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2, 'Mike'").ToList();
 Console.WriteLine($"Result: {persons.Count}");
 Console.WriteLine($"1st person: {persons[0].ToJson()}");
 Console.WriteLine($"2nd person: {persons[1].ToJson()}");
