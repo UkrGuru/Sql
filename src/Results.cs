@@ -23,7 +23,7 @@ namespace UkrGuru.Sql
             null => defaultValue,
             DBNull => defaultValue,
             T t => t,
-            char[] chars => (T)(new string(chars) as object),
+            char[] chars => (T)Convert.ChangeType(new string(chars), typeof(T)),
             JsonElement je => je.ValueKind == JsonValueKind.Null ? defaultValue : ParseJE<T>(je),
             _ => Parse<T>(value)
         };
@@ -37,7 +37,8 @@ namespace UkrGuru.Sql
         private static T? Parse<T>(object value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
         {
             Type t when TypeParsers.TryGetValue(t, out var parser) => (T?)parser(value),
-            Type t when t.IsEnum => (T)Enum.Parse(t, value.ToString()!),
+            Type t when t.IsEnum => (T?)(Enum.TryParse(t, Convert.ToString(value), out object? result) && Enum.IsDefined(t, result)
+                    ? result : throw new ArgumentException($"'{value}' is not a valid value for enum {t.Name}")),
             Type t => JsonSerializer.Deserialize<T>((string)value)
         };
 
