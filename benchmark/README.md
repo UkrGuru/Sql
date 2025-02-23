@@ -1,6 +1,6 @@
 ﻿# Insider Info About the New Results Class in Benchmark
 
-The world of performance benchmarking is always evolving, and recent updates to the `Sql` repository by UkrGuru have introduced an exciting new `Results` class in the `BenchResults` namespace. This article dives into the details of this new implementation, comparing it to its predecessor, and showcasing the performance improvements it brings to the table. Let’s explore what’s under the hood, based on the latest insights from the [Program.cs file](https://github.com/UkrGuru/Sql/blob/main/benchmark/BenchResults/ResultsNew.cs) in the benchmark suite.
+The world of performance benchmarking is always evolving, and recent updates to the `Sql` repository by UkrGuru have introduced an exciting new `Results` class in the `BenchResults` namespace. This article dives into the details of this new implementation, comparing it to its predecessor, and showcasing the performance improvements it brings to the table. Let’s explore what’s under the hood, based on the latest insights from the [Program.cs file](https://github.com/UkrGuru/Sql/blob/main/benchmark/BenchResults/Program.cs) in the benchmark suite.
 
 ## Benchmark Setup
 
