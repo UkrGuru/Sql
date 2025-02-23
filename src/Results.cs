@@ -23,7 +23,7 @@ namespace UkrGuru.Sql
             null => defaultValue,
             DBNull => defaultValue,
             T t => t,
-            char[] chars => (T)Convert.ChangeType(new string(chars), typeof(T)),
+            char[] chars => Parse<T>(new string(chars)),
             JsonElement je => je.ValueKind == JsonValueKind.Null ? defaultValue : ParseJE<T>(je),
             _ => Parse<T>(value)
         };
@@ -46,8 +46,8 @@ namespace UkrGuru.Sql
         {
             { typeof(byte[]), value => Convert.FromBase64String((string)value) },
             { typeof(char[]), value => ((string)value).ToCharArray() },
-            { typeof(char), value => ((string)value)[0] },
-            { typeof(string), value => value.ToJson().Trim('"') },
+            { typeof(char), value => char.Parse((string)value) },
+            { typeof(string), value => JsonSerializer.Serialize(value).Trim('"') },
             { typeof(Guid), value => Guid.Parse((string)value) },
             { typeof(DateOnly), value => DateOnly.FromDateTime(Convert.ToDateTime(value)) },
             { typeof(DateTime), value => Convert.ToDateTime(value) },

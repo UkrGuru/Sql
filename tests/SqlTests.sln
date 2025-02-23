@@ -5,7 +5,7 @@ VisualStudioVersion = 17.13.35818.85 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlTests", "SqlTests\SqlTests.csproj", "{3E700242-C8F4-4EA4-80EB-3955847FB139}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql", "..\..\src\Sql.csproj", "{6782BAEC-FB62-2EA3-F566-10D98192EAB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sql", "..\src\Sql.csproj", "{6782BAEC-FB62-2EA3-F566-10D98192EAB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
