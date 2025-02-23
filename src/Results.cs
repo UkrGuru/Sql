@@ -35,11 +35,11 @@ namespace UkrGuru.Sql
             if (targetType == typeof(string))
             {
                 return (T?)(object?)(je.ValueKind == JsonValueKind.String
-                    ? je.GetString()!
+                    ? je.GetString()
                     : je.GetRawText().Trim('"'));
             }
 
-            return je.Deserialize<T?>();
+            return je.Deserialize<T>();
         }
 
         private static T? Parse<T>(object value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
