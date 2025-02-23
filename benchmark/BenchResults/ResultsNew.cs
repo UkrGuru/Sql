@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace UkrGuru.Sql;
 
-public class ResultsPro
+public class ResultsNew
 {
     public static object? Parse(object? value) => value == DBNull.Value ? null : value;
 
