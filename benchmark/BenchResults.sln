@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35818.85 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeserializeJEBenchmark", "DeserializeJEBenchmark\DeserializeJEBenchmark.csproj", "{59317E30-EE78-4E03-BF60-22D15E8C0E2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BenchResults", "BenchResults\BenchResults.csproj", "{C08CF22A-F37C-4C1D-B2C3-5DF04EF27D7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{59317E30-EE78-4E03-BF60-22D15E8C0E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{59317E30-EE78-4E03-BF60-22D15E8C0E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{59317E30-EE78-4E03-BF60-22D15E8C0E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{59317E30-EE78-4E03-BF60-22D15E8C0E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C08CF22A-F37C-4C1D-B2C3-5DF04EF27D7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C08CF22A-F37C-4C1D-B2C3-5DF04EF27D7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C08CF22A-F37C-4C1D-B2C3-5DF04EF27D7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C08CF22A-F37C-4C1D-B2C3-5DF04EF27D7E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {43DA3417-49C0-446F-B34F-11E20C69A010}
+		SolutionGuid = {B0BF594F-DF48-455B-AED6-FB5B759BD15F}
 	EndGlobalSection
 EndGlobal
