@@ -9,6 +9,256 @@ namespace UkrGuru.Sql.Tests;
 public class ResultsTests
 {
     [Fact]
+    public void CanParse_Null_Default()
+    {
+        Assert.Null(Results.Parse<bool?>(null));
+        Assert.False(Results.Parse<bool>(null));
+        Assert.False(Results.Parse<bool>(null, false));
+        Assert.True(Results.Parse<bool>(null, true));
+
+        Assert.Null(Results.Parse<bool?>(DBNull.Value));
+        Assert.False(Results.Parse<bool>(DBNull.Value));
+        Assert.False(Results.Parse<bool>(DBNull.Value, false));
+        Assert.True(Results.Parse<bool>(DBNull.Value, true));
+    }
+
+    [Fact]
+    public void CanParse_Bit()
+    {
+        bool result = true;
+
+        Assert.Equal(result, Results.Parse<bool>(result));
+        Assert.Equal(result, Results.Parse<bool>(result.ToString().ToLower()));
+        Assert.Equal(result.ToString().ToLower(), Results.Parse<string>(result));
+    }
+
+    [Fact]
+    public void CanParse_Byte()
+    {
+        byte result = 123;
+
+        Assert.Equal(result, Results.Parse<byte>(result));
+        Assert.Equal(result, Results.Parse<byte>(result.ToString()));
+        Assert.Equal(result.ToString(), Results.Parse<string>(result));
+    }
+
+    [Fact]
+    public void CanParse_Bytes()
+    {
+        byte[] result = [1, 2];
+
+        Assert.Equal(result, Results.Parse<byte[]>(result));
+        Assert.Equal(result, Results.Parse<byte[]>(Convert.ToBase64String(result)));
+        Assert.Equal(Convert.ToBase64String(result), Results.Parse<string>(result));
+    }
+
+    [Fact]
+    public void Parse_InvalidCharArrayToBool_ThrowsFormatException()
+    {
+        char[] chars = new[] { 'x', 'y', 'z' };
+        Assert.Throws<JsonException>(() => Results.Parse<bool>(chars));
+        // Demo: Non-boolean string to bool
+    }
+
+    [Fact]
+    public void Parse_LargeNumberToByte_ThrowsOverflow()
+    {
+        Assert.Throws<JsonException>(() => Results.Parse<byte>("1000"));
+        // Demo: TypeParsers byte[] overflow
+    }
+
+    [Fact]
+    public void Parse_InvalidBase64String_ThrowsFormatException()
+    {
+        Assert.Throws<FormatException>(() => Results.Parse<byte[]>("invalid!"));
+        // Demo: TypeParsers byte[] parsing lacks validation
+    }
+
+    [Fact]
+    public void Parse_LargeCharArrayToShort_ThrowsOverflow()
+    {
+        char[] chars = "123456".ToCharArray();
+        Assert.Throws<JsonException>(() => Results.Parse<short>(chars));
+        // Demo: Overflow in numeric conversion
+    }
+
+    [Fact]
+    public void Parse_CharArrayToUnsignedInt_ThrowsOverflow()
+    {
+        char[] chars = "-123".ToCharArray();
+        Assert.Throws<JsonException>(() => Results.Parse<uint>(chars));
+        // Demo: Negative string to unsigned type
+    }
+
+    [Fact]
+    public void Parse_NestedJsonToFlatType_ThrowsJsonException()
+    {
+        var json = "{\"value\": {\"inner\": 42}}";
+        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
+        Assert.Throws<JsonException>(() => Results.Parse<int>(element));
+        // Demo: Nested JSON to primitive
+    }
+
+    [Fact]
+    public void Parse_NullJsonPropertyToNullable_ThrowsUnexpected()
+    {
+        var json = "{\"value\": null}";
+        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
+        var result = Results.Parse<int?>(element);
+        Assert.Null(result); // Passes: Null handling for nullable
+                             // Demo: No issue—checks consistency
+    }
+
+    [Fact]
+    public void Parse_CharArrayToNullableInt_ThrowsUnexpected()
+    {
+        char[] chars = new[] { 'a', 'b', 'c' };
+        Assert.Throws<JsonException>(() => Results.Parse<int?>(chars));
+        // Demo: Nullable type conversion edge case
+    }
+
+    [Fact]
+    public void Parse_EmptyCharArrayToInt_ThrowsFormatException()
+    {
+        char[] chars = Array.Empty<char>();
+        Assert.Throws<JsonException>(() => Results.Parse<int>(chars));
+        // Demo: Empty char[] conversion
+    }
+
+    [Fact]
+    public void Parse_CharArrayToInvalidType_ThrowsException()
+    {
+        char[] chars = new[] { 'a', 'b', 'c' };
+        Assert.Throws<JsonException>(() => Results.Parse<int>(chars));
+        // Demo: Convert.ChangeType fails for non-numeric to int
+    }
+
+    [Fact]
+    public void ParseJE_Null()
+    {
+        var json = "null";
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Null(Results.Parse<bool?>(value));
+    }
+
+    [Fact]
+    public void ParseJE_Boolean()
+    {
+        bool bool_value = false;
+        var json = JsonSerializer.Serialize(bool_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.False(Results.Parse<bool>(value));
+        Assert.Equal(bool.FalseString.ToLower(), Results.Parse<string>(value));
+
+        bool_value = true;
+        json = JsonSerializer.Serialize(bool_value);
+        value = JsonDocument.Parse(json).RootElement;
+        Assert.True(Results.Parse<bool>(value));
+        Assert.Equal(bool.TrueString.ToLower(), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void ParseJE_BooleanToBool_Succeeds() // Verify correct behavior
+    {
+        // Arrange
+        var json = JsonSerializer.Serialize(new { value = true });
+        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
+
+        // Act
+        var result = Results.Parse<bool>(element);
+
+        // Assert: Confirms it works as you said
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void ParseJE_Byte()
+    {
+        byte byte_value = 0x0a;
+        var json = JsonSerializer.Serialize(byte_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(byte_value, Results.Parse<byte>(value));
+        Assert.Equal(byte_value.ToString(), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void ParseJE_ByteArray()
+    {
+        byte[] bytearr_value = Array.Empty<byte>();
+        var json = JsonSerializer.Serialize(bytearr_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(bytearr_value, Results.Parse<byte[]>(value));
+        Assert.Equal(bytearr_value, Convert.FromBase64String(Results.Parse<string>(value)!));
+
+        bytearr_value = Encoding.UTF8.GetBytes("\n\r");
+        json = JsonSerializer.Serialize(bytearr_value);
+        value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(bytearr_value, Results.Parse<byte[]>(value));
+        Assert.Equal(bytearr_value, Convert.FromBase64String(Results.Parse<string>(value)!));
+    }
+
+    [Fact]
+    public void ParseJE_Short()
+    {
+        short[] testValues = [short.MinValue, short.MaxValue, 0];
+        foreach (var short_value in testValues)
+        {
+            var json = JsonSerializer.Serialize(short_value);
+            var value = JsonDocument.Parse(json).RootElement;
+            Assert.Equal(short_value, Results.Parse<short>(value));
+            Assert.Equal(short_value.ToString(), Results.Parse<string>(value));
+        }
+    }
+
+    // 3. Null Handling: Null to non-nullable silently defaults
+    [Fact]
+    public void Parse_JsonNullToInt_ReturnsDefaultValue()
+    {
+        var json = JsonSerializer.Serialize(new { value = (int?)null });
+        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
+        var result = Results.Parse<int>(element);
+        Assert.Equal(0, result); // Passes: Correctly returns default value
+    }
+
+    // 4. Strictness Inconsistency: Lenient parsing when strict expected
+    [Fact]
+    public void Parse_InvalidIntString_ThrowsJsonException()
+    {
+        var json = JsonSerializer.Serialize(new { Value = "not-an-int" });
+        var element = JsonDocument.Parse(json).RootElement.GetProperty("Value");
+        Assert.Throws<JsonException>(() => Results.Parse<int>(element)); // Expected failure: Returns 0
+                                                                         // Problem: Should throw (per your strict tests), but leniently defaults
+    }
+
+    // 5. TypeParsers Gaps: Missing int parser leads to JSON fallback
+    [Fact]
+    public void Parse_IntString_UsesDirectParsing()
+    {
+        var ex = Record.Exception(() => Results.Parse<int>("123"));
+        Assert.Null(ex); // Expected failure: No exception, but uses JSON deserialize
+        var result = Results.Parse<int>("123");
+        Assert.Equal(123, result);
+        // Problem: Falls back to JSON instead of direct int.Parse, less efficient
+    }
+
+
+    [Fact]
+    public void Parse_ShouldConvertDateTimeToDateOnly()
+    {
+        // Arrange
+        DateTime dateTime = new DateTime(2025, 2, 22);
+        DateOnly expectedDateOnly = DateOnly.FromDateTime(dateTime);
+
+        // Act
+        DateOnly? result = Results.Parse<DateOnly>(dateTime);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Equal(expectedDateOnly, result);
+    }
+
+
+    [Fact]
     public void Parse_CharArrayToDelegate_ThrowsException()
     {
         char[] chars = new[] { 'a', 'b', 'c' };
@@ -43,14 +293,6 @@ public class ResultsTests
     }
 
     [Fact]
-    public void Parse_CharArrayToUnsignedInt_ThrowsOverflow()
-    {
-        char[] chars = "-123".ToCharArray();
-        Assert.Throws<JsonException>(() => Results.Parse<uint>(chars));
-        // Demo: Negative string to unsigned type
-    }
-
-    [Fact]
     public void Parse_JsonEmptyStringToGuid_ThrowsFormatException()
     {
         var json = "{\"value\": \"\"}";
@@ -59,22 +301,6 @@ public class ResultsTests
         // Demo: Empty string to Guid via TypeParsers
     }
 
-    [Fact]
-    public void Parse_NestedJsonToFlatType_ThrowsJsonException()
-    {
-        var json = "{\"value\": {\"inner\": 42}}";
-        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
-        Assert.Throws<JsonException>(() => Results.Parse<int>(element));
-        // Demo: Nested JSON to primitive
-    }
-
-    [Fact]
-    public void Parse_InvalidCharArrayToBool_ThrowsFormatException()
-    {
-        char[] chars = new[] { 'x', 'y', 'z' };
-        Assert.Throws<JsonException>(() => Results.Parse<bool>(chars));
-        // Demo: Non-boolean string to bool
-    }
 
     public enum TestEnum { One, Two }
 
@@ -93,32 +319,6 @@ public class ResultsTests
         var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
         Assert.Throws<JsonException>(() => Results.Parse<TestEnum>(element));
         // Demo: Case sensitivity in JSON enum parsing
-    }
-
-    [Fact]
-    public void Parse_LargeCharArrayToShort_ThrowsOverflow()
-    {
-        char[] chars = "123456".ToCharArray();
-        Assert.Throws<JsonException>(() => Results.Parse<short>(chars));
-        // Demo: Overflow in numeric conversion
-    }
-
-    [Fact]
-    public void Parse_NullJsonPropertyToNullable_ThrowsUnexpected()
-    {
-        var json = "{\"value\": null}";
-        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
-        var result = Results.Parse<int?>(element);
-        Assert.Null(result); // Passes: Null handling for nullable
-                             // Demo: No issue—checks consistency
-    }
-
-    [Fact]
-    public void Parse_CharArrayToNullableInt_ThrowsUnexpected()
-    {
-        char[] chars = new[] { 'a', 'b', 'c' };
-        Assert.Throws<JsonException>(() => Results.Parse<int?>(chars));
-        // Demo: Nullable type conversion edge case
     }
 
     [Fact]
@@ -161,27 +361,12 @@ public class ResultsTests
     }
 
     [Fact]
-    public void Parse_EmptyCharArrayToInt_ThrowsFormatException()
-    {
-        char[] chars = Array.Empty<char>();
-        Assert.Throws<JsonException>(() => Results.Parse<int>(chars));
-        // Demo: Empty char[] conversion
-    }
-
-    [Fact]
     public void Parse_JsonArrayToEnum_ThrowsJsonException()
     {
         var json = "{\"value\": [\"One\", \"Two\"]}";
         var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
         Assert.Throws<JsonException>(() => Results.Parse<TestEnum>(element));
         // Demo: Array to enum mismatch
-    }
-
-    [Fact]
-    public void Parse_LargeNumberToByte_ThrowsOverflow()
-    {
-        Assert.Throws<JsonException>(() => Results.Parse<byte>("1000"));
-        // Demo: TypeParsers byte[] overflow
     }
 
     [Fact]
@@ -219,14 +404,6 @@ public class ResultsTests
     }
 
     [Fact]
-    public void Parse_CharArrayToInvalidType_ThrowsException()
-    {
-        char[] chars = new[] { 'a', 'b', 'c' };
-        Assert.Throws<JsonException>(() => Results.Parse<int>(chars));
-        // Demo: Convert.ChangeType fails for non-numeric to int
-    }
-
-    [Fact]
     public void Parse_NullToEnum_ReturnsDefaultValue()
     {
         object nullObj = null!;
@@ -234,12 +411,6 @@ public class ResultsTests
         Assert.Equal(TestEnum.One, result); // Passes: Correctly returns default
     }
 
-    [Fact]
-    public void Parse_InvalidBase64String_ThrowsFormatException()
-    {
-        Assert.Throws<FormatException>(() => Results.Parse<byte[]>("invalid!"));
-        // Demo: TypeParsers byte[] parsing lacks validation
-    }
 
     [Fact]
     public void Parse_JsonObjectWithExtraProperties_IgnoresExtras()
@@ -294,36 +465,6 @@ public class ResultsTests
         Assert.Equal(new TimeSpan(12, 30, 45), result); // Passes with your code
     }
 
-    // 3. Null Handling: Null to non-nullable silently defaults
-    [Fact]
-    public void Parse_JsonNullToInt_ReturnsDefaultValue()
-    {
-        var json = JsonSerializer.Serialize(new { value = (int?)null });
-        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
-        var result = Results.Parse<int>(element);
-        Assert.Equal(0, result); // Passes: Correctly returns default value
-    }
-
-    // 4. Strictness Inconsistency: Lenient parsing when strict expected
-    [Fact]
-    public void Parse_InvalidIntString_ThrowsJsonException()
-    {
-        var json = JsonSerializer.Serialize(new { Value = "not-an-int" });
-        var element = JsonDocument.Parse(json).RootElement.GetProperty("Value");
-        Assert.Throws<JsonException>(() => Results.Parse<int>(element)); // Expected failure: Returns 0
-                                                                         // Problem: Should throw (per your strict tests), but leniently defaults
-    }
-
-    // 5. TypeParsers Gaps: Missing int parser leads to JSON fallback
-    [Fact]
-    public void Parse_IntString_UsesDirectParsing()
-    {
-        var ex = Record.Exception(() => Results.Parse<int>("123"));
-        Assert.Null(ex); // Expected failure: No exception, but uses JSON deserialize
-        var result = Results.Parse<int>("123");
-        Assert.Equal(123, result);
-        // Problem: Falls back to JSON instead of direct int.Parse, less efficient
-    }
 
     // 6. TimeSpan Rigidity: Non-"c" format fails
     [Fact]
@@ -375,19 +516,6 @@ public class ResultsTests
         Assert.Equal(42, result);
     }
 
-    [Fact]
-    public void ParseJE_BooleanToBool_Succeeds() // Verify correct behavior
-    {
-        // Arrange
-        var json = JsonSerializer.Serialize(new { value = true });
-        var element = JsonDocument.Parse(json).RootElement.GetProperty("value");
-
-        // Act
-        var result = Results.Parse<bool>(element);
-
-        // Assert: Confirms it works as you said
-        Assert.True(result);
-    }
 
     // New Edge Case 1: Parsing JSON object to primitive type
     [Fact]
@@ -537,19 +665,6 @@ public class ResultsTests
         Assert.Throws<JsonException>(() => Results.Parse<int>(element));
     }
 
-    // Potential Issue 4: JsonSerializer.Deserialize with complex types
-    [Fact]
-    public void Parse_ComplexJsonToCustomType_ThrowsJsonException()
-    {
-        // Arrange
-        var json = JsonSerializer.Serialize(new { name = "test", age = "not-a-number" });
-        var element = JsonDocument.Parse(json).RootElement;
-
-        // Act & Assert
-        var r = Results.Parse<ComplexType>(element);
-        //Assert.Throws<JsonException>(() => Results.Parse<ComplexType>(json));
-    }
-
     // Additional test for nullability annotation (Point 7)
     [Fact]
     public void Parse_DBNull_ReturnsNull()
@@ -564,19 +679,6 @@ public class ResultsTests
         Assert.Null(result);
     }
 
-    [Fact]
-    public void CanParse_Null_Default()
-    {
-        Assert.Null(Results.Parse<bool?>(null));
-        Assert.False(Results.Parse<bool>(null));
-        Assert.False(Results.Parse<bool>(null, false));
-        Assert.True(Results.Parse<bool>(null, true));
-
-        Assert.Null(Results.Parse<bool?>(DBNull.Value));
-        Assert.False(Results.Parse<bool>(DBNull.Value));
-        Assert.False(Results.Parse<bool>(DBNull.Value, false));
-        Assert.True(Results.Parse<bool>(DBNull.Value, true));
-    }
 
     [Fact]
     public void CanParse_BigInt()
@@ -586,36 +688,6 @@ public class ResultsTests
         Assert.Equal(result, Results.Parse<long>(result));
         Assert.Equal(result, Results.Parse<long>(result.ToString()));
         Assert.Equal(result.ToString(), Results.Parse<string>(result));
-    }
-
-    [Fact]
-    public void CanParse_Bit()
-    {
-        bool result = true;
-
-        Assert.Equal(result, Results.Parse<bool>(result));
-        Assert.Equal(result, Results.Parse<bool>(result.ToString().ToLower()));
-        Assert.Equal(result.ToString().ToLower(), Results.Parse<string>(result));
-    }
-
-    [Fact]
-    public void CanParse_Byte()
-    {
-        byte result = 123;
-
-        Assert.Equal(result, Results.Parse<byte>(result));
-        Assert.Equal(result, Results.Parse<byte>(result.ToString()));
-        Assert.Equal(result.ToString(), Results.Parse<string>(result));
-    }
-
-    [Fact]
-    public void CanParse_Bytes()
-    {
-        byte[] result = [1, 2];
-
-        Assert.Equal(result, Results.Parse<byte[]>(result));
-        Assert.Equal(result, Results.Parse<byte[]>(Convert.ToBase64String(result)));
-        Assert.Equal(Convert.ToBase64String(result), Results.Parse<string>(result));
     }
 
     [Fact]
@@ -749,10 +821,10 @@ public class ResultsTests
     {
         var result = Results.Parse<TestEnum>(input);
 
-        Assert.Equal(expected, Results.Parse<TestEnum>(result));
+        Assert.Equal(expected, Results.Parse<TestEnum>(input));
         Assert.Equal(expected, Results.Parse<TestEnum>((int)result));
-        Assert.Equal(expected, Results.Parse<TestEnum>(result.ToString()));
-        Assert.Equal(((int)expected).ToString(), Results.Parse<string>(result));
+        Assert.Equal(expected, Results.Parse<TestEnum>(input.ToString()));
+        Assert.Equal(expected.ToString(), Results.Parse<string>(input));
     }
 
     [Fact]
@@ -767,170 +839,159 @@ public class ResultsTests
     }
 
     [Fact]
-    public void CanParse_JsonElement()
+    public void CanParseChar_JsonElement()
     {
-        var json = "null"; var value = JsonDocument.Parse(json).RootElement;
-        Assert.Null(Results.Parse<bool?>(value));
-
-        bool bool_value = false;
-        json = JsonSerializer.Serialize(bool_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.False(Results.Parse<bool>(value));
-        Assert.Equal(bool.FalseString.ToLower(), Results.Parse<string>(value));
-
-        bool_value = true;
-        json = JsonSerializer.Serialize(bool_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.True(Results.Parse<bool>(value));
-        Assert.Equal(bool.TrueString.ToLower(), Results.Parse<string>(value));
-
-        byte byte_value = 0x0a;
-        json = JsonSerializer.Serialize(byte_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(byte_value, Results.Parse<byte>(value));
-        Assert.Equal(byte_value.ToString(), Results.Parse<string>(value));
-
-        byte[] bytearr_value = Array.Empty<byte>();
-        json = JsonSerializer.Serialize(bytearr_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(bytearr_value, Results.Parse<byte[]>(value));
-        Assert.Equal(bytearr_value, Convert.FromBase64String(Results.Parse<string>(value)!));
-
-        bytearr_value = Encoding.UTF8.GetBytes("\n\r");
-        json = JsonSerializer.Serialize(bytearr_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(bytearr_value, Results.Parse<byte[]>(value));
-        Assert.Equal(bytearr_value, Convert.FromBase64String(Results.Parse<string>(value)!));
-
         char char_value = 'A';
-        json = JsonSerializer.Serialize(char_value); value = JsonDocument.Parse(json).RootElement;
+        var json = JsonSerializer.Serialize(char_value);
+        var value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(char_value, Results.Parse<char>(value));
         Assert.Equal(char_value.ToString(), Results.Parse<string>(value));
+    }
 
+    [Fact]
+    public void CanParseCharArray_JsonElement()
+    {
         char[] chararr_value = Array.Empty<char>();
-        json = JsonSerializer.Serialize(chararr_value); value = JsonDocument.Parse(json).RootElement;
+        var json = JsonSerializer.Serialize(chararr_value);
+        var value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(chararr_value, Results.Parse<char[]>(value));
         Assert.Equal("[]", Results.Parse<string>(value));
 
         chararr_value = ['A', 'V'];
-        json = JsonSerializer.Serialize(chararr_value); value = JsonDocument.Parse(json).RootElement;
+        json = JsonSerializer.Serialize(chararr_value);
+        value = JsonDocument.Parse(json).RootElement;
         Assert.Equal(chararr_value, Results.Parse<char[]>(value));
-        Assert.Equal("[\"A\",\"V\"]", Results.Parse<string>(value));
-
-        DateOnly date_value = new(2000, 11, 25);
-        json = JsonSerializer.Serialize(date_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(date_value, Results.Parse<DateOnly>(value));
-        Assert.Equal(date_value.ToString("yyyy-MM-dd"), Results.Parse<string>(value));
-
-        TimeOnly time_value = new(23, 59, 59);
-        json = JsonSerializer.Serialize(time_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(time_value, Results.Parse<TimeOnly>(value));
-        Assert.Equal(time_value.ToString("HH:mm:ss"), Results.Parse<string>(value));
-
-        DateTime datetime_value = new(2000, 11, 25, 23, 59, 59);
-        json = JsonSerializer.Serialize(datetime_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(datetime_value, Results.Parse<DateTime>(value));
-        Assert.Equal(datetime_value.ToString("yyyy-MM-ddTHH:mm:ss"), Results.Parse<string>(value));
-
-        decimal decimal_value = decimal.MinValue;
-        json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(decimal_value, Results.Parse<decimal>(value));
-        Assert.Equal(decimal_value.ToString(), Results.Parse<string>(value));
-
-        decimal_value = decimal.Zero;
-        json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(decimal_value, Results.Parse<decimal>(value));
-        Assert.Equal(decimal_value.ToString(), Results.Parse<string>(value));
-
-        decimal_value = decimal.One;
-        json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(decimal_value, Results.Parse<decimal>(value));
-        Assert.Equal(decimal_value.ToString(), Results.Parse<string>(value));
-
-        decimal_value = decimal.MinusOne;
-        json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(decimal_value, Results.Parse<decimal>(value));
-        Assert.Equal(decimal_value.ToString(), Results.Parse<string>(value));
-
-        decimal_value = decimal.MaxValue;
-        json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(decimal_value, Results.Parse<decimal>(value));
-        Assert.Equal(decimal_value.ToString(), Results.Parse<string>(value));
-
-        decimal_value = 123456.789m;
-        json = JsonSerializer.Serialize(decimal_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(decimal_value, Results.Parse<decimal>(value));
-        Assert.Equal(decimal_value.ToString(), Results.Parse<string>(value));
-
-        double double_value = 123456.789d;
-        json = JsonSerializer.Serialize(double_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(double_value, Results.Parse<double>(value));
-        Assert.Equal(double_value.ToString(), Results.Parse<string>(value));
-
-        TestEnum enum_value = TestEnum.One;
-        json = JsonSerializer.Serialize(enum_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(enum_value, Results.Parse<TestEnum>(value));
-        Assert.Equal(((int)enum_value).ToString(), Results.Parse<string>(value));
-
-        Guid guid_value = Guid.NewGuid();
-        json = JsonSerializer.Serialize(guid_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(guid_value, Results.Parse<Guid>(value));
-        Assert.Equal(guid_value.ToString(), Results.Parse<string>(value));
-
-        short short_value = short.MinValue;
-        json = JsonSerializer.Serialize(short_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(short_value, Results.Parse<short>(value));
-        Assert.Equal(short_value.ToString(), Results.Parse<string>(value));
-
-        short_value = short.MaxValue;
-        json = JsonSerializer.Serialize(short_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(short_value, Results.Parse<short>(value));
-        Assert.Equal(short_value.ToString(), Results.Parse<string>(value));
-
-        short_value = 0;
-        json = JsonSerializer.Serialize(short_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(short_value, Results.Parse<short>(value));
-        Assert.Equal(short_value.ToString(), Results.Parse<string>(value));
-
-        int int_value = int.MinValue;
-        json = JsonSerializer.Serialize(int_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(int_value, Results.Parse<int>(value));
-        Assert.Equal(int_value.ToString(), Results.Parse<string>(value));
-
-        int_value = int.MaxValue;
-        json = JsonSerializer.Serialize(int_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(int_value, Results.Parse<int>(value));
-        Assert.Equal(int_value.ToString(), Results.Parse<string>(value));
-
-        int_value = 0;
-        json = JsonSerializer.Serialize(int_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(int_value, Results.Parse<int>(value));
-        Assert.Equal(int_value.ToString(), Results.Parse<string>(value));
-
-        long long_value = long.MinValue;
-        json = JsonSerializer.Serialize(long_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(long_value, Results.Parse<long>(value));
-        Assert.Equal(long_value.ToString(), Results.Parse<string>(value));
-
-        long_value = long.MaxValue;
-        json = JsonSerializer.Serialize(long_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(long_value, Results.Parse<long>(value));
-        Assert.Equal(long_value.ToString(), Results.Parse<string>(value));
-
-        long_value = 0;
-        json = JsonSerializer.Serialize(long_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(long_value, Results.Parse<long>(value));
-        Assert.Equal(long_value.ToString(), Results.Parse<string>(value));
-
-        string string_value = string.Empty;
-        json = JsonSerializer.Serialize(string_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(string_value, Results.Parse<string>(value));
-
-        string_value = "ASD";
-        json = JsonSerializer.Serialize(string_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(string_value, Results.Parse<string>(value));
-
-        string[] strarr_value = ["A", "V"];
-        json = JsonSerializer.Serialize(strarr_value); value = JsonDocument.Parse(json).RootElement;
-        Assert.Equal(strarr_value, Results.Parse<string[]>(value));
         Assert.Equal("[\"A\",\"V\"]", Results.Parse<string>(value));
     }
 
+    [Fact]
+    public void CanParseDateOnly_JsonElement()
+    {
+        DateOnly date_value = new(2000, 11, 25);
+        var json = JsonSerializer.Serialize(date_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(date_value, Results.Parse<DateOnly>(value));
+        Assert.Equal(date_value.ToString("yyyy-MM-dd"), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void CanParseTimeOnly_JsonElement()
+    {
+        TimeOnly time_value = new(23, 59, 59);
+        var json = JsonSerializer.Serialize(time_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(time_value, Results.Parse<TimeOnly>(value));
+        Assert.Equal(time_value.ToString("HH:mm:ss"), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void CanParseDateTime_JsonElement()
+    {
+        DateTime datetime_value = new(2000, 11, 25, 23, 59, 59);
+        var json = JsonSerializer.Serialize(datetime_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(datetime_value, Results.Parse<DateTime>(value));
+        Assert.Equal(datetime_value.ToString("yyyy-MM-ddTHH:mm:ss"), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void CanParseDecimal_JsonElement()
+    {
+        decimal[] testValues = [
+            decimal.MinValue,
+        decimal.Zero,
+        decimal.One,
+        decimal.MinusOne,
+        decimal.MaxValue,
+        123456.789m
+        ];
+
+        foreach (var decimal_value in testValues)
+        {
+            var json = JsonSerializer.Serialize(decimal_value);
+            var value = JsonDocument.Parse(json).RootElement;
+            Assert.Equal(decimal_value, Results.Parse<decimal>(value));
+            Assert.Equal(decimal_value.ToString(), Results.Parse<string>(value));
+        }
+    }
+
+    [Fact]
+    public void CanParseDouble_JsonElement()
+    {
+        double double_value = 123456.789d;
+        var json = JsonSerializer.Serialize(double_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(double_value, Results.Parse<double>(value));
+        Assert.Equal(double_value.ToString(), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void CanParseEnum_JsonElement()
+    {
+        TestEnum enum_value = TestEnum.One;
+        var json = JsonSerializer.Serialize(enum_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(enum_value, Results.Parse<TestEnum>(value));
+        Assert.Equal(((int)enum_value).ToString(), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void CanParseGuid_JsonElement()
+    {
+        Guid guid_value = Guid.NewGuid();
+        var json = JsonSerializer.Serialize(guid_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(guid_value, Results.Parse<Guid>(value));
+        Assert.Equal(guid_value.ToString(), Results.Parse<string>(value));
+    }
+
+    [Fact]
+    public void CanParseInt_JsonElement()
+    {
+        int[] testValues = [int.MinValue, int.MaxValue, 0];
+        foreach (var int_value in testValues)
+        {
+            var json = JsonSerializer.Serialize(int_value);
+            var value = JsonDocument.Parse(json).RootElement;
+            Assert.Equal(int_value, Results.Parse<int>(value));
+            Assert.Equal(int_value.ToString(), Results.Parse<string>(value));
+        }
+    }
+
+    [Fact]
+    public void CanParseLong_JsonElement()
+    {
+        long[] testValues = [long.MinValue, long.MaxValue, 0];
+        foreach (var long_value in testValues)
+        {
+            var json = JsonSerializer.Serialize(long_value);
+            var value = JsonDocument.Parse(json).RootElement;
+            Assert.Equal(long_value, Results.Parse<long>(value));
+            Assert.Equal(long_value.ToString(), Results.Parse<string>(value));
+        }
+    }
+
+    [Fact]
+    public void CanParseString_JsonElement()
+    {
+        string[] testValues = [string.Empty, "ASD"];
+        foreach (var string_value in testValues)
+        {
+            var json = JsonSerializer.Serialize(string_value);
+            var value = JsonDocument.Parse(json).RootElement;
+            Assert.Equal(string_value, Results.Parse<string>(value));
+        }
+    }
+
+    [Fact]
+    public void CanParseStringArray_JsonElement()
+    {
+        string[] strarr_value = ["A", "V"];
+        var json = JsonSerializer.Serialize(strarr_value);
+        var value = JsonDocument.Parse(json).RootElement;
+        Assert.Equal(strarr_value, Results.Parse<string[]>(value));
+        Assert.Equal("[\"A\",\"V\"]", Results.Parse<string>(value));
+    }
     private class CustomType { public string? Name { get; set; } public int Age { get; set; } }
 
     private class CustomObject
@@ -951,5 +1012,4 @@ public class ResultsTests
         public string? Name { get; set; }
         public int Age { get; set; }
     }
-
 }

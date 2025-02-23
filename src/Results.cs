@@ -28,11 +28,19 @@ namespace UkrGuru.Sql
             _ => Parse<T>(value)
         };
 
-        private static T? ParseJE<T>(JsonElement value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
+        private static T? ParseJE<T>(JsonElement je)
         {
-            Type t when t == typeof(string) => (T)(value.ValueKind == JsonValueKind.String ? value.GetString()! : value.GetRawText().Trim('"') as object),
-            _ => value.Deserialize<T>()
-        };
+            Type targetType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+            if (targetType == typeof(string))
+            {
+                return (T?)(object?)(je.ValueKind == JsonValueKind.String
+                    ? je.GetString()!
+                    : je.GetRawText().Trim('"'));
+            }
+
+            return je.Deserialize<T?>();
+        }
 
         private static T? Parse<T>(object value) => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
         {
