@@ -15,46 +15,53 @@ public class ResultsNew
         null => defaultValue,
         DBNull => defaultValue,
         T t => t,
-        string s => typeof(T) switch
-        {
-            Type t when TypeDeserializers.TryGetValue(t, out var deserializer) => (T?)deserializer(s),
-            Type t when t.IsEnum => (T?)SerilizeEnum(t, s),
-            _ => JsonSerializer.Deserialize<T?>(s, options),
-        },
-        char[] chars => Parse<T>(new string(chars), defaultValue, options),
-        JsonElement je => je.ValueKind switch
-        {
-            JsonValueKind.Null => defaultValue,
-            _ => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
-            {
-                Type t when t == typeof(string) => (T?)(object?)(je.ValueKind switch
-                {
-                    JsonValueKind.String => je.GetString()!,
-                    _ => je.GetRawText().Trim('"')
-                }),
-                _ => je.Deserialize<T?>(options)
-            }
-        },
+        string s => Deserialize<T>(s, options),
+        char[] chars => Deserialize<T>(new string(chars), options),
+        JsonElement je => DeserializeJE(je, defaultValue, options),
         _ => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
         {
-            Type t when t == typeof(string) => (T?)(TypeSerializers.TryGetValue(value.GetType(), out var serialize) switch
-            {
-                true => serialize(value),
-                _ => (object?)JsonSerializer.Serialize(value, options),
-            }),
-            Type t when TypeParsers.TryGetValue(t, out var parser) => (T?)parser(value),
-            Type t when t.IsEnum => (T?)SerilizeEnum(t, value),
+            Type t when t == typeof(string) => Serialize<T>(value, options),
+            Type t when TypeConverters.TryGetValue(t, out var convert) => (T?)convert(value),
+            Type t when t.IsEnum => (T?)SerializeEnum(t, value),
             _ => JsonSerializer.Deserialize<T?>((string)value, options),
         }
     };
 
-    private static object SerilizeEnum(Type t, object value) => Enum.TryParse(t, Convert.ToString(value), out object? result) switch
+    private static T? Deserialize<T>(string value, JsonSerializerOptions? options = null) => typeof(T) switch
+    {
+        Type t when TypeParsers.TryGetValue(t, out var parser) => (T?)parser(value),
+        Type t when t.IsEnum => (T?)SerializeEnum(t, value),
+        _ => JsonSerializer.Deserialize<T?>(value, options),
+    };
+
+    private static T? DeserializeJE<T>(JsonElement je, T? defaultValue = default, JsonSerializerOptions? options = null) => je.ValueKind switch
+    {
+        JsonValueKind.Null => defaultValue,
+        _ => (Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T)) switch
+        {
+            Type t when t == typeof(string) => (T?)(object?)(je.ValueKind switch
+            {
+                JsonValueKind.String => je.GetString()!,
+                _ => je.GetRawText().Trim('"')
+            }),
+            _ => je.Deserialize<T?>(options)
+        }
+    };
+
+    public static T? Serialize<T>(object value, JsonSerializerOptions? options = null)
+        => (T?)(TypeSerializers.TryGetValue(value.GetType(), out var serialize) switch
+        {
+            true => serialize(value),
+            _ => (object?)JsonSerializer.Serialize(value, options)
+        });
+
+    private static object SerializeEnum(Type t, object value) => Enum.TryParse(t, Convert.ToString(value), out object? result) switch
     {
         true when Enum.IsDefined(t, result) => result,
         _ => throw new ArgumentException($"'{value}' is not a valid value for enum {t.Name}")
     };
 
-    private static readonly Dictionary<Type, Func<string, object?>> TypeDeserializers = new()
+    private static readonly Dictionary<Type, Func<string, object?>> TypeParsers = new()
     {
         { typeof(bool), value => bool.Parse(value) },
         { typeof(byte), value => byte.Parse(value, CultureInfo.InvariantCulture) },
@@ -76,7 +83,7 @@ public class ResultsNew
         { typeof(char[]), value => value.ToCharArray() }
     };
 
-    private static readonly Dictionary<Type, Func<object, object>> TypeParsers = new()
+    private static readonly Dictionary<Type, Func<object, object>> TypeConverters = new()
     {
         { typeof(bool), value => Convert.ToBoolean(value) },
         { typeof(byte), value => Convert.ToByte(value, CultureInfo.InvariantCulture) },
