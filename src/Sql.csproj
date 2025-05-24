@@ -11,7 +11,7 @@
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.1.3</Version>
+        <Version>1.2.5</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
@@ -31,6 +31,9 @@
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0|AnyCPU'">
         <DebugType>none</DebugType>
     </PropertyGroup>
+    <ItemGroup>
+      <Compile Remove="Results - Grok .cs" />
+    </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE">
@@ -48,7 +51,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.5" />
     </ItemGroup>
 </Project>
