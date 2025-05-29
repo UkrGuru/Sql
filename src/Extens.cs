@@ -36,8 +36,8 @@ public static class Extens
             default:
                 SqlParameter parameter = new("@Data", data);
                 if (parameter.SqlValue is null && data is not Enum && data is not Stream && data is not TextReader && data is not XmlReader)
-                    parameters.AddRange((from prop in data.GetType().GetProperties()
-                                         select new SqlParameter("@" + prop.Name, prop.GetValue(data) ?? DBNull.Value)).ToArray());
+                    parameters.AddRange([.. from prop in data.GetType().GetProperties()
+                                         select new SqlParameter("@" + prop.Name, prop.GetValue(data) ?? DBNull.Value)]);
                 else
                     parameters.Add(parameter);
                 break;
@@ -98,7 +98,7 @@ public static class Extens
 
         using var command = connection.CreateCommand(tsql, data, timeout);
 
-        return command.Read<T>().ToList();
+        return [.. command.Read<T>()];
     }
 
     public static async Task<int> ExecAsync(this SqlConnection connection,

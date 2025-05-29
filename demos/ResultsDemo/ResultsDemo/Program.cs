@@ -30,8 +30,7 @@ Console.WriteLine($"Parsed DateTime from string: {Results.Parse<DateTime>(dateTi
 object dateOnly = DateOnly.FromDateTime(DateTime.Now);
 Console.WriteLine("\nParse DateOnly:");
 Console.WriteLine($"Parsed DateOnly: {Results.Parse<DateOnly>(dateOnly)}");
-Console.WriteLine($"Parsed DateOnly from string: {Results.Parse<DateOnly>(dateOnly.ToString())}");
-
+Console.WriteLine($"Parsed DateOnly from string: {Results.Parse<DateOnly>(DateTime.Today.ToString("yyyy-MM-dd"))}");
 // Parsing TimeOnly
 object timeOnly = TimeOnly.FromDateTime(DateTime.Now);
 Console.WriteLine("\nParse TimeOnly:");
