@@ -67,17 +67,20 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 
 3. **Reading Multiple Records**
    ```csharp
-   var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2, 'Mike'").ToList();
+   var persons = DbHelper.Read<Person>("""
+        SELECT 1 Id, 'John' Name
+        UNION ALL SELECT 2, 'Mike'
+        """).ToList();
    Console.WriteLine($"\r\nResult: {persons.Count}");
    Console.WriteLine($"1st person: {persons[0].ToJson()}");
    Console.WriteLine($"2nd person: {persons[1].ToJson()}");
-   ```
+    ```
    - **Output:**
-     ```
-     Result: 2
-     1st person: {"Id":1,"Name":"John"}
-     2nd person: {"Id":2,"Name":"Mike"}
-     ```
+    ```
+    Result: 2
+    1st person: {"Id":1,"Name":"John"}
+    2nd person: {"Id":2,"Name":"Mike"}
+    ```
 
 You can find more examples in the `demos` folder of this repository.
 

@@ -13,7 +13,10 @@ var name = DbHelper.Exec<string>("SELECT @Name", person);
 Console.WriteLine($"\r\nResult: {name}");
 
 // Read multiple records from a SQL query and map them to a list of Person objects
-var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2, 'Mike'").ToList();
+var persons = DbHelper.Read<Person>("""
+    SELECT 1 Id, 'John' Name
+    UNION ALL SELECT 2, 'Mike'
+    """).ToList();
 Console.WriteLine($"\r\nResult: {persons.Count}");
 Console.WriteLine($"1st person: {persons[0].ToJson()}");
 Console.WriteLine($"2nd person: {persons[1].ToJson()}");
