@@ -11,7 +11,7 @@
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.5.9</Version>
+        <Version>1.6.9</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
@@ -52,7 +52,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.1" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
     </ItemGroup>
 </Project>
