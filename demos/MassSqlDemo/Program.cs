@@ -75,7 +75,7 @@ class Utils {
         {
             DbHelper.ConnectionString = $"{BaseConnectionString};Database=master;";
 
-            DbHelper.Exec("""
+            DbHelper.Exec($"""
         IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = '{DatabaseName}')
         BEGIN
             CREATE DATABASE [{DatabaseName}];
