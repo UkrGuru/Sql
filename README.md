@@ -1,4 +1,4 @@
-# UkrGuru.Sql
+﻿# UkrGuru.Sql
 [![Nuget](https://img.shields.io/nuget/v/UkrGuru.Sql)](https://www.nuget.org/packages/UkrGuru.Sql/)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-yellow.svg)](https://www.paypal.com/donate/?hosted_button_id=BPUF3H86X96YN)
 
@@ -48,34 +48,36 @@ To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 
 ## Samples
 
-```csharp
-using UkrGuru.Sql;
+### ✅ **Code Breakdown and Corresponding Results**
 
-// Set the connection string for the database
-DbHelper.ConnectionString = "Server=(localdb)\\mssqllocaldb";
+1. **Addition Query**
+   ```csharp
+   var result = DbHelper.Exec<int>("SELECT @A + @B", new { A = 2, B = 2 });
+   Console.WriteLine($"Result: {result}");
+   ```
+   - **Output:** `Result: 4`
 
-// Execute a simple SQL query with parameters and return an integer result
-var result = DbHelper.Exec<int>("SELECT @A + @B", new { A = 2, B = 2 });
-Console.WriteLine($"Result: {result}");
+2. **String Retrieval from Anonymous Object**
+   ```csharp
+   var person = new { Id = 1, Name = "John" };
+   var name = DbHelper.Exec<string>("SELECT @Name", person);
+   Console.WriteLine($"\r\nResult: {name}");
+   ```
+   - **Output:** `Result: John`
 
-// Work with JSON-like anonymous object and retrieve a string value
-var person = new { Id = 1, Name = "John" };
-var name = DbHelper.Exec<string>("SELECT @Name", person);
-Console.WriteLine($"\r\nResult: {name}");
-
-// Read multiple records from a SQL query and map them to a list of Person objects
-var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2, 'Mike'").ToList();
-Console.WriteLine($"\r\nResult: {persons.Count}");
-Console.WriteLine($"1st person: {persons[0].ToJson()}");
-Console.WriteLine($"2nd person: {persons[1].ToJson()}");
-
-// Define the Person class to match the structure of the SQL result
-class Person
-{
-    public int? Id { get; set; }
-    public string? Name { get; set; }
-}
-```
+3. **Reading Multiple Records**
+   ```csharp
+   var persons = DbHelper.Read<Person>("SELECT 1 Id, 'John' Name UNION ALL SELECT 2, 'Mike'").ToList();
+   Console.WriteLine($"\r\nResult: {persons.Count}");
+   Console.WriteLine($"1st person: {persons[0].ToJson()}");
+   Console.WriteLine($"2nd person: {persons[1].ToJson()}");
+   ```
+   - **Output:**
+     ```
+     Result: 2
+     1st person: {"Id":1,"Name":"John"}
+     2nd person: {"Id":2,"Name":"Mike"}
+     ```
 
 You can find more examples in the `demos` folder of this repository.
 
