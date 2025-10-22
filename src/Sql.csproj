@@ -11,30 +11,30 @@
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.6.9</Version>
+        <Version>1.8.10</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>UkrGuru.Sql is a library that simplifies the interaction between .NET applications and SQL Server databases.</Description>
         <RepositoryUrl>https://github.com/UkrGuru/Sql</RepositoryUrl>
-        <PackageReleaseNotes>Optimized functionality for "Results.Parse"</PackageReleaseNotes>
+        <RepositoryType>git</RepositoryType>
+        <PackageReleaseNotes>Added a new extension method AddSql to IServiceCollection for streamlined SQL service registration.</PackageReleaseNotes>
+        <PackageTags>sql;sqlserver;data;database;dotnet</PackageTags>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0|AnyCPU'">
-        <DebugType>portable</DebugType>
+
+    <PropertyGroup>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <DebugType>embedded</DebugType>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <EnableSourceLink>true</EnableSourceLink>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0|AnyCPU'">
-        <DebugType>portable</DebugType>
+
+    <PropertyGroup>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0|AnyCPU'">
-        <DebugType>none</DebugType>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0|AnyCPU'">
-        <DebugType>none</DebugType>
-    </PropertyGroup>
-    <ItemGroup>
-      <Compile Remove="Results - Grok .cs" />
-    </ItemGroup>
 
     <ItemGroup>
         <EmbeddedResource Include="..\LICENSE">
@@ -53,6 +53,6 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
     </ItemGroup>
 </Project>

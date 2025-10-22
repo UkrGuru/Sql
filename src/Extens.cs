@@ -13,11 +13,25 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Xml;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace UkrGuru.Sql;
 
 public static class Extens
 {
+    public static IServiceCollection AddSql(this IServiceCollection services, string? connectionString = null, bool singleton = false)
+    {
+        ArgumentNullException.ThrowIfNull(connectionString, "connectionString");
+        DbHelper.ConnectionString = connectionString;
+
+        if (singleton)
+            services.AddSingleton<IDbService, DbService>();
+        else
+            services.AddScoped<IDbService, DbService>();
+
+        return services;
+    }
+
     public static void AddData(this SqlParameterCollection parameters, object data)
     {
         switch (data)
