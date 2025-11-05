@@ -69,7 +69,7 @@ class Student
 class Utils {
     public static void InitDb()
     {
-        var BaseConnectionString = "Server=(localdb)\\mssqllocaldb;Integrated Security=true";
+        var BaseConnectionString = "Data Source=(Local);Initial Catalog={DbName};Integrated Security=True;Trust Server Certificate=True;";
         var DatabaseName = "UkrGuruSqlMass";
         try
         {
