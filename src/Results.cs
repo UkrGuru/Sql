@@ -11,7 +11,9 @@ namespace UkrGuru.Sql;
 public class Results
 {
     public PropertyInfo[] Props { get; set; } = [];
+
     public int[] Indexes { get; set; } = [];
+
     public object[] Values { get; set; } = [];
 
     public static object? Parse(object? value) => value == DBNull.Value ? null : value;

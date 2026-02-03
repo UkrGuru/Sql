@@ -2,18 +2,18 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
-using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace UkrGuru.Sql;
 
@@ -21,7 +21,8 @@ public static class Extens
 {
     public static IServiceCollection AddSql(this IServiceCollection services, string? connectionString = null, bool singleton = false)
     {
-        ArgumentNullException.ThrowIfNull(connectionString, "connectionString");
+        ArgumentNullException.ThrowIfNull(connectionString);
+
         DbHelper.ConnectionString = connectionString;
 
         if (singleton)
@@ -51,7 +52,7 @@ public static class Extens
                 SqlParameter parameter = new("@Data", data);
                 if (parameter.SqlValue is null && data is not Enum && data is not Stream && data is not TextReader && data is not XmlReader)
                     parameters.AddRange([.. from prop in data.GetType().GetProperties()
-                                         select new SqlParameter("@" + prop.Name, prop.GetValue(data) ?? DBNull.Value)]);
+                                            select new SqlParameter("@" + prop.Name, prop.GetValue(data) ?? DBNull.Value)]);
                 else
                     parameters.Add(parameter);
                 break;
@@ -155,7 +156,7 @@ public static class Extens
 
         using var command = connection.CreateCommand(tsql, data, timeout);
 
-        var items = new List<T>();
+        List<T> items = [];
 
         await foreach (var item in command.ReadAsync<T>(cancellationToken))
         {
@@ -202,6 +203,7 @@ public static class Extens
     }
 
     public static string ToJson(this object value, JsonSerializerOptions? options = null) => JsonSerializer.Serialize(value, options);
+
     public static async Task<string?> TryExecAsync(this IDbService db, string proc, string? data = default)
     {
         try

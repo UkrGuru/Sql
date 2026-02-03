@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>UkrGuru.Sql</AssemblyName>
@@ -11,7 +11,7 @@
         <Authors>UkrGuru</Authors>
         <Copyright>Oleksandr Viktor (UkrGuru)</Copyright>
         <PackageProjectUrl>https://www.nuget.org/packages/UkrGuru.Sql</PackageProjectUrl>
-        <Version>1.8.10</Version>
+        <Version>1.10.2.1</Version>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageIcon>ukrguru-logo.jpg</PackageIcon>
@@ -19,7 +19,7 @@
         <Description>UkrGuru.Sql is a library that simplifies the interaction between .NET applications and SQL Server databases.</Description>
         <RepositoryUrl>https://github.com/UkrGuru/Sql</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageReleaseNotes>Added a new extension method AddSql to IServiceCollection for streamlined SQL service registration.</PackageReleaseNotes>
+        <PackageReleaseNotes></PackageReleaseNotes>
         <PackageTags>sql;sqlserver;data;database;dotnet</PackageTags>
     </PropertyGroup>
 
@@ -52,7 +52,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
+        <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.4" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.2" />
     </ItemGroup>
 </Project>
