@@ -202,7 +202,6 @@ public static class Extens
     }
 
     public static string ToJson(this object value, JsonSerializerOptions? options = null) => JsonSerializer.Serialize(value, options);
-
     public static async Task<string?> TryExecAsync(this IDbService db, string proc, string? data = default)
     {
         try
