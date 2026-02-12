@@ -178,10 +178,9 @@ public class Results
 
     private static object ParseEnum(Type t, ReadOnlySpan<char> value)
     {
-        if (Enum.TryParse(t, value, ignoreCase: true, out object? result))
-        {
-            if (Enum.IsDefined(t, result)) return result;
-        }
+        if (Enum.TryParse(t, value, ignoreCase: true, out object? result) && Enum.IsDefined(t, result)) 
+            return result;
+
         throw new ArgumentException($"'{value}' is not a valid value for enum {t.Name}");
     }
 }

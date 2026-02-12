@@ -17,7 +17,7 @@ using System.Xml;
 
 namespace UkrGuru.Sql;
 
-public static class Extens
+public static partial class Extens
 {
     public static IServiceCollection AddSql(this IServiceCollection services, string? connectionString = null, bool singleton = false)
     {
@@ -71,8 +71,7 @@ public static class Extens
 
         return command;
 
-        static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100 &&
-            Regex.IsMatch(tsql, @"^([a-zA-Z_]\w*|\[.+?\])(\.([a-zA-Z_]\w*|\[.+?\]))?$");
+        static bool IsName(string? tsql) => tsql is not null && tsql.Length <= 100 && SpNameRegex().IsMatch(tsql);
     }
 
     public static int Exec(this SqlConnection connection, string tsql, object? data = default, int? timeout = default)
@@ -158,10 +157,7 @@ public static class Extens
 
         List<T> items = [];
 
-        await foreach (var item in command.ReadAsync<T>(cancellationToken))
-        {
-            items.Add(item);
-        }
+        await foreach (var item in command.ReadAsync<T>(cancellationToken)) items.Add(item);
 
         return items;
     }
@@ -227,4 +223,7 @@ public static class Extens
             return await Task.FromResult($"Error: {ex.Message}. Proc={proc}");
         }
     }
+
+    [GeneratedRegex(@"^([a-zA-Z_]\w*|\[.+?\])(\.([a-zA-Z_]\w*|\[.+?\]))?$")]
+    private static partial Regex SpNameRegex();
 }
