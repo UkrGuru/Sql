@@ -3,18 +3,24 @@
 
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace UkrGuru.Sql;
 
-public class DbHelper
+public partial class DbHelper
 {
     private static string? _connectionString;
 
-    public static string ConnectionString { set => _connectionString = value; }
+    public static string ConnectionString
+    {
+        set => _connectionString = value;
+    }
 
-    public static SqlConnection CreateConnection() => new(_connectionString);
+    public static SqlConnection CreateConnection()
+    {
+        var connection = new SqlConnection(_connectionString);
+        connection.Open();
+        return connection;
+    }
 
     public static int Exec(string tsql, object? data = default, int? timeout = default)
     {
@@ -36,25 +42,4 @@ public class DbHelper
 
         return connection.Read<T>(tsql, data, timeout);
     }
-
-    public static async Task<int> ExecAsync(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-    {
-        using var connection = CreateConnection();
-
-        return await connection.ExecAsync(tsql, data, timeout, cancellationToken);
-    }
-
-    public static async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-    {
-        using var connection = CreateConnection();
-
-        return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
-    }
-
-    public static async Task<IEnumerable<T>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
-    {
-        using var connection = CreateConnection();
-
-        return await connection.ReadAsync<T>(tsql, data, timeout, cancellationToken);
-    }
-}   
+}

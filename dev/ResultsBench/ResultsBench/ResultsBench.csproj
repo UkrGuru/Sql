@@ -8,15 +8,15 @@
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-        <DebugType>none</DebugType>
+      <DebugType>none</DebugType>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-        <DebugType>none</DebugType>
+      <DebugType>none</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="UkrGuru.Sql" Version="2.0.0-beta1" />
+        <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
     </ItemGroup>
 
 </Project>

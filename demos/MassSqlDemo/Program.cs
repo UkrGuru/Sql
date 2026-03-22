@@ -3,7 +3,7 @@
 Utils.InitDb();
 
 int N = 100 * 1024; 
-List<Student>? students = new();
+List<Student>? students = [];
 DateTime started = DateTime.Now;
 
 // MASS INSERT
@@ -19,7 +19,7 @@ var sql_insert = """
 
 started = DateTime.Now;
 
-await DbHelper.ExecAsync(sql_insert, students.ToJson());
+DbHelper.Exec(sql_insert, students.ToJson());
 
 Console.WriteLine($"Inserted {N / 1024}K - {DateTime.Now.Subtract(started)}");
 
@@ -39,7 +39,7 @@ var sql_update = """
 
 started = DateTime.Now;
 
-await DbHelper.ExecAsync(sql_update,
+DbHelper.Exec(sql_update,
     students.Select(c => new { c.ID, c.Class, c.Grade }).ToJson());
 
 Console.WriteLine($"Updated {N / 1024}K - {DateTime.Now.Subtract(started)}");
@@ -53,7 +53,7 @@ var sql_delete = """
 
 started = DateTime.Now;
 
-await DbHelper.ExecAsync(sql_delete,
+DbHelper.Exec(sql_delete,
     students.Where(x => x.Grade < 1).Select(c => c.ID ).ToJson());
 
 Console.WriteLine($"Deleted {(N / 5) / 1024}K - {DateTime.Now.Subtract(started)}");

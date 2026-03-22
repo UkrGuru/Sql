@@ -17,34 +17,35 @@ UkrGuru.Sql is a powerful library designed to simplify interactions between .NET
 To use the UkrGuru.Sql library in your ASP.NET Core project, follow these steps:
 
 1. Install the UkrGuru.Sql package from NuGet:
-   ```sh
-   dotnet add package UkrGuru.Sql
-   ```
+```sh
+dotnet add package UkrGuru.Sql
+```
 
 2. Update your `appsettings.json` file to include the connection string:
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=YourDbName;Trusted_Connection=True;"
-     }
-   }
-   ```
+```json
+{
+    "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=YourDbName;Trusted_Connection=True;"
+    }
+}
+```
 
 3. Register the UkrGuru.Sql services in your `Program.cs` file:
-
-   ```csharp
-   using UkrGuru.Sql;
+```csharp
+using UkrGuru.Sql;
    
-   // Set connection string for static use
-   DbHelper.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Set connection string for static use
+DbHelper.ConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-   var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
-   // Register DbService for dependency injection as a scoped service
-   builder.Services.AddScoped<IDbService, DbService>();
+// Register DbService for DI
+builder.Services.AddScoped<IDbService>(sp =>
+    new DbService(builder.Configuration.GetConnectionString("DefaultConnection")!)
+);
       
-   var app = builder.Build();
-   ```
+var app = builder.Build();
+```
 
 ## Samples
 

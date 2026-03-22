@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +10,8 @@ namespace UkrGuru.Sql;
 
 public interface IDbService
 {
+    Task<SqlConnection> CreateConnectionAsync(CancellationToken cancellationToken = default);
+
     Task<int> ExecAsync(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
 
     Task<T?> ExecAsync<T>(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
@@ -18,34 +19,34 @@ public interface IDbService
     Task<IEnumerable<T>> ReadAsync<T>(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
 }
 
-public class DbService : IDbService
+public class DbService(string connectionString) : IDbService
 {
-    public virtual string ConnectionStringName => "DefaultConnection";
+    private readonly string _connectionString = connectionString;
 
-    private readonly string? _connectionString;
-
-    public DbService(IConfiguration configuration)
-        => _connectionString = configuration.GetConnectionString(ConnectionStringName);
-
-    public SqlConnection CreateConnection() => new(_connectionString);
+    public async Task<SqlConnection> CreateConnectionAsync(CancellationToken cancellationToken = default)
+    {
+        var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync(cancellationToken);
+        return connection;
+    }
 
     public async Task<int> ExecAsync(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        using var connection = CreateConnection();
+        await using var connection = await CreateConnectionAsync(cancellationToken);
 
         return await connection.ExecAsync(tsql, data, timeout, cancellationToken);
     }
 
     public async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        using var connection = CreateConnection();
+        await using var connection = await CreateConnectionAsync(cancellationToken);
 
         return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
     }
 
     public async Task<IEnumerable<T>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        using var connection = CreateConnection();
+        await using var connection = await CreateConnectionAsync(cancellationToken);
 
         return await connection.ReadAsync<T>(tsql, data, timeout, cancellationToken);
     }

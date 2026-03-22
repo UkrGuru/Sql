@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace UkrGuru.Sql;
 
-public class Results
+public class Results_UkrGuru
 {
     public PropertyInfo[] Props { get; set; } = [];
 
