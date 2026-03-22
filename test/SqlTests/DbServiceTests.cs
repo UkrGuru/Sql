@@ -7,15 +7,15 @@ namespace UkrGuru.Sql.Tests;
 
 public partial class DbServiceTests
 {
-    private readonly IDbService _db;
+    private readonly DbService _db;
 
     public DbServiceTests() => _db = new DbService(TestConnectionString);
 
-    public static readonly TheoryData<byte[]> GetTestBytes = new() { Array.Empty<byte>(), TestBytes1k, TestBytes5k, TestBytes55k };
+    public static readonly TheoryData<byte[]> GetTestBytes = [Array.Empty<byte>(), TestBytes1k, TestBytes5k, TestBytes55k];
 
-    public static readonly TheoryData<char[]> GetTestChars = new() { Array.Empty<char>(), TestChars1k, TestChars5k, TestChars55k };
+    public static readonly TheoryData<char[]> GetTestChars = [Array.Empty<char>(), TestChars1k, TestChars5k, TestChars55k];
 
-    public static readonly TheoryData<string> GetTestStrings = new() { string.Empty, TestString1k, TestString5k, TestString55k };
+    public static readonly TheoryData<string> GetTestStrings = [string.Empty, TestString1k, TestString5k, TestString55k];
 
     [Fact]
     public async Task CanExecAsync_Null()
