@@ -1,6 +1,4 @@
-﻿using System;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Order;
+﻿using BenchmarkDotNet.Attributes;
 
 // Your two Results versions:
 using UkrGuruOld = UkrGuru.Sql.Results_UkrGuru;
@@ -33,76 +31,76 @@ public class BenchParse
     // ----------------------------
     // BOOL
     // ----------------------------
-    [Benchmark] public bool Old_Bool() => UkrGuruOld.Parse<bool>(boolText);
-    [Benchmark] public bool New_Bool() => CopilotNew.Parse<bool>(boolText);
+    [Benchmark] public bool Ukr_Bool() => UkrGuruOld.Parse<bool>(boolText);
+    [Benchmark] public bool Cop_Bool() => CopilotNew.Parse<bool>(boolText);
 
     // ----------------------------
     // INT
     // ----------------------------
-    [Benchmark] public int Old_Int() => UkrGuruOld.Parse<int>(intText);
-    [Benchmark] public int New_Int() => CopilotNew.Parse<int>(intText);
+    [Benchmark] public int Ukr_Int() => UkrGuruOld.Parse<int>(intText);
+    [Benchmark] public int Cop_Int() => CopilotNew.Parse<int>(intText);
 
     // ----------------------------
     // DOUBLE
     // ----------------------------
-    [Benchmark] public double Old_Double() => UkrGuruOld.Parse<double>(doubleText);
-    [Benchmark] public double New_Double() => CopilotNew.Parse<double>(doubleText);
+    [Benchmark] public double Ukr_Double() => UkrGuruOld.Parse<double>(doubleText);
+    [Benchmark] public double Cop_Double() => CopilotNew.Parse<double>(doubleText);
 
     // ----------------------------
     // DECIMAL
     // ----------------------------
-    [Benchmark] public decimal Old_Decimal() => UkrGuruOld.Parse<decimal>(decimalText);
-    [Benchmark] public decimal New_Decimal() => CopilotNew.Parse<decimal>(decimalText);
+    [Benchmark] public decimal Ukr_Decimal() => UkrGuruOld.Parse<decimal>(decimalText);
+    [Benchmark] public decimal Cop_Decimal() => CopilotNew.Parse<decimal>(decimalText);
 
     // ----------------------------
     // GUID
     // ----------------------------
-    [Benchmark] public Guid Old_Guid() => UkrGuruOld.Parse<Guid>(guidText);
-    [Benchmark] public Guid New_Guid() => CopilotNew.Parse<Guid>(guidText);
+    [Benchmark] public Guid Ukr_Guid() => UkrGuruOld.Parse<Guid>(guidText);
+    [Benchmark] public Guid Cop_Guid() => CopilotNew.Parse<Guid>(guidText);
 
     // ----------------------------
     // DateOnly
     // ----------------------------
-    [Benchmark] public DateOnly Old_DateOnly() => UkrGuruOld.Parse<DateOnly>(dateOnlyText);
-    [Benchmark] public DateOnly New_DateOnly() => CopilotNew.Parse<DateOnly>(dateOnlyText);
+    [Benchmark] public DateOnly Ukr_DateOnly() => UkrGuruOld.Parse<DateOnly>(dateOnlyText);
+    [Benchmark] public DateOnly Cop_DateOnly() => CopilotNew.Parse<DateOnly>(dateOnlyText);
 
     // ----------------------------
     // TimeOnly
     // ----------------------------
-    [Benchmark] public TimeOnly Old_TimeOnly() => UkrGuruOld.Parse<TimeOnly>(timeOnlyText);
-    [Benchmark] public TimeOnly New_TimeOnly() => CopilotNew.Parse<TimeOnly>(timeOnlyText);
+    [Benchmark] public TimeOnly Ukr_TimeOnly() => UkrGuruOld.Parse<TimeOnly>(timeOnlyText);
+    [Benchmark] public TimeOnly Cop_TimeOnly() => CopilotNew.Parse<TimeOnly>(timeOnlyText);
 
     // ----------------------------
     // TimeSpan
     // ----------------------------
-    [Benchmark] public TimeSpan Old_TimeSpan() => UkrGuruOld.Parse<TimeSpan>(timeSpanText);
-    [Benchmark] public TimeSpan New_TimeSpan() => CopilotNew.Parse<TimeSpan>(timeSpanText);
+    [Benchmark] public TimeSpan Ukr_TimeSpan() => UkrGuruOld.Parse<TimeSpan>(timeSpanText);
+    [Benchmark] public TimeSpan Cop_TimeSpan() => CopilotNew.Parse<TimeSpan>(timeSpanText);
 
     // ----------------------------
     // byte[]
     // ----------------------------
-    [Benchmark] public byte[] Old_ByteArray() => UkrGuruOld.Parse<byte[]>(base64);
-    [Benchmark] public byte[] New_ByteArray() => CopilotNew.Parse<byte[]>(base64);
+    [Benchmark] public byte[] Ukr_ByteArray() => UkrGuruOld.Parse<byte[]>(base64);
+    [Benchmark] public byte[] Cop_ByteArray() => CopilotNew.Parse<byte[]>(base64);
 
     // ----------------------------
     // char[]
     // ----------------------------
     private readonly char[] chars = "Hello".ToCharArray();
 
-    [Benchmark] public char[] Old_CharArray() => UkrGuruOld.Parse<char[]>(chars);
-    [Benchmark] public char[] New_CharArray() => CopilotNew.Parse<char[]>(chars);
+    [Benchmark] public char[] Ukr_CharArray() => UkrGuruOld.Parse<char[]>(chars);
+    [Benchmark] public char[] Cop_CharArray() => CopilotNew.Parse<char[]>(chars);
 
     // ----------------------------
     // string serialize
     // ----------------------------
-    [Benchmark] public string Old_Serialize() => UkrGuruOld.Parse<string>(12345);
-    [Benchmark] public string New_Serialize() => CopilotNew.Parse<string>(12345);
+    [Benchmark] public string Ukr_Serialize() => UkrGuruOld.Parse<string>(12345);
+    [Benchmark] public string Cop_Serialize() => CopilotNew.Parse<string>(12345);
 
     // ----------------------------
     // Enum
     // ----------------------------
     public enum TestEnum { One, Two }
 
-    [Benchmark] public TestEnum Old_Enum() => UkrGuruOld.Parse<TestEnum>("Two");
-    [Benchmark] public TestEnum New_Enum() => CopilotNew.Parse<TestEnum>("Two");
+    [Benchmark] public TestEnum Ukr_Enum() => UkrGuruOld.Parse<TestEnum>("Two");
+    [Benchmark] public TestEnum Cop_Enum() => CopilotNew.Parse<TestEnum>("Two");
 }

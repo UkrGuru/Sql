@@ -135,7 +135,7 @@ static void Read1stRecord()
 {
     try
     {
-        string selectQuery = "SELECT TOP 1 * FROM Persons";
+        string selectQuery = "SELECT TOP (1) * FROM Persons";
 
         var person = DbHelper.Read<Person>(selectQuery).FirstOrDefault();
 

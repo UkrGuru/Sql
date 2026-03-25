@@ -44,7 +44,7 @@ This method leverages `OPENJSON` to parse the JSON data and insert it into the `
 
 ```
 Database created successfully.
-Inserted 100K - 00:00:00.4206026
+Inserted 100K - 00:00:00.3788301
 ```
 
 #### Mass Update
@@ -76,7 +76,7 @@ Console.WriteLine($"Updated {N / 1024}K - {DateTime.Now.Subtract(started)}");
 This update operation uses a similar approach, parsing the JSON data and updating the corresponding records in the `Students` table. The result of this operation was:
 
 ```
-Updated 100K - 00:00:00.3418457
+Updated 100K - 00:00:00.3271387
 ```
 
 #### Mass Delete
@@ -101,7 +101,7 @@ Console.WriteLine($"Deleted {(N / 5) / 1024}K - {DateTime.Now.Subtract(started)}
 This delete operation ensures that only the records meeting the specified condition are removed from the `Students` table. The result of this operation was:
 
 ```
-Deleted 20K - 00:00:00.0400413
+Deleted 20K - 00:00:00.0383853
 ```
 
 #### Conclusion
