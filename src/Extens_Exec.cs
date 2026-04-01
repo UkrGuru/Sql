@@ -33,11 +33,7 @@ public static partial class Extens
     /// <summary>
     /// Executes a SQL command asynchronously.
     /// </summary>
-    public static async Task<int> ExecAsync(
-        this SqlConnection connection,
-        string tsql,
-        object? data = default,
-        int? timeout = default,
+    public static async Task<int> ExecAsync(this SqlConnection connection, string tsql, object? data = default, int? timeout = default, 
         CancellationToken cancellationToken = default)
     {
         await using var command = connection.CreateCommand(tsql, data, timeout);
@@ -47,11 +43,7 @@ public static partial class Extens
     /// <summary>
     /// Executes a SQL scalar query asynchronously.
     /// </summary>
-    public static async Task<T?> ExecAsync<T>(
-        this SqlConnection connection,
-        string tsql,
-        object? data = default,
-        int? timeout = default,
+    public static async Task<T?> ExecAsync<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default,
         CancellationToken cancellationToken = default)
     {
         await using var command = connection.CreateCommand(tsql, data, timeout);

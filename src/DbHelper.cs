@@ -3,6 +3,8 @@
 
 using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace UkrGuru.Sql;
 
@@ -24,21 +26,41 @@ public partial class DbHelper
     /// <summary>
     /// Creates and opens a new <see cref="SqlConnection"/> using the configured connection string.
     /// </summary>
-    /// <returns>An opened <see cref="SqlConnection"/> instance.</returns>
-    public static SqlConnection CreateConnection()
+    public static SqlConnection CreateConnection(string? connectionString = default)
     {
-        var connection = new SqlConnection(_connectionString);
+        var connection = new SqlConnection(connectionString ?? _connectionString);
         connection.Open();
         return connection;
     }
 
     /// <summary>
+    /// Creates and opens a new SQL connection asynchronously.
+    /// </summary>
+    public static async Task<SqlConnection> CreateConnectionAsync(string? connectionString = default, CancellationToken cancellationToken = default)
+    {
+        var connection = new SqlConnection(connectionString ?? _connectionString);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        return connection;
+    }
+
+    /// <summary>
+    /// Creates and opens a <see cref="SqlCommand"/> asynchronously using the configured connection string.
+    /// The returned command is associated with a connection that will be disposed when the command is disposed.
+    /// </summary>
+    public static async Task<SqlCommand> CreateCommandAsync(
+        string tsql, object? data = default, string? connectionString = default, int? timeout = default, CancellationToken cancellationToken = default)
+    {
+        var connection = await CreateConnectionAsync(connectionString, cancellationToken).ConfigureAwait(false);
+        var cmd = connection.CreateCommand(tsql, data, timeout);
+
+        cmd.Disposed += (_, __) => connection.Dispose();
+
+        return cmd;
+    }
+
+    /// <summary>
     /// Executes a SQL command and returns the number of affected rows.
     /// </summary>
-    /// <param name="tsql">The SQL command text.</param>
-    /// <param name="data">The parameters object or anonymous object.</param>
-    /// <param name="timeout">Optional command timeout.</param>
-    /// <returns>Number of rows affected.</returns>
     public static int Exec(string tsql, object? data = default, int? timeout = default)
     {
         using var connection = CreateConnection();
@@ -48,11 +70,6 @@ public partial class DbHelper
     /// <summary>
     /// Executes a SQL query and returns a single typed result.
     /// </summary>
-    /// <typeparam name="T">The type of the result.</typeparam>
-    /// <param name="tsql">The SQL command text.</param>
-    /// <param name="data">The parameters object or anonymous object.</param>
-    /// <param name="timeout">Optional command timeout.</param>
-    /// <returns>A single result of type <typeparamref name="T"/>.</returns>
     public static T? Exec<T>(string tsql, object? data = default, int? timeout = default)
     {
         using var connection = CreateConnection();
@@ -62,11 +79,6 @@ public partial class DbHelper
     /// <summary>
     /// Executes a SQL query and returns an enumerable sequence of typed results.
     /// </summary>
-    /// <typeparam name="T">The type of the mapped result items.</typeparam>
-    /// <param name="tsql">The SQL query text.</param>
-    /// <param name="data">The parameters object or anonymous object.</param>
-    /// <param name="timeout">Optional command timeout.</param>
-    /// <returns>An enumerable collection of results.</returns>
     public static IEnumerable<T> Read<T>(string tsql, object? data = default, int? timeout = default)
     {
         using var connection = CreateConnection();

@@ -14,24 +14,19 @@ namespace UkrGuru.Sql;
 public interface IDbService
 {
     /// <summary>
-    /// Creates and opens a new SQL connection asynchronously.
-    /// </summary>
-    Task<SqlConnection> CreateConnectionAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Executes a SQL command asynchronously and returns the number of affected rows.
     /// </summary>
-    Task<int> ExecAsync(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
+    Task<int> ExecAsync(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes a SQL query asynchronously and returns a single typed result.
     /// </summary>
-    Task<T?> ExecAsync<T>(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
+    Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Executes a SQL query asynchronously and returns a sequence of typed results.
     /// </summary>
-    Task<IEnumerable<T>> ReadAsync<T>(string proc, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
+    Task<IEnumerable<T>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -43,31 +38,31 @@ public class DbService(string connectionString) : IDbService
     private readonly string _connectionString = connectionString;
 
     /// <inheritdoc />
-    public async Task<SqlConnection> CreateConnectionAsync(CancellationToken cancellationToken = default)
+    private async Task<SqlConnection> CreateConnectionAsync(CancellationToken cancellationToken = default)
     {
         var connection = new SqlConnection(_connectionString);
-        await connection.OpenAsync(cancellationToken);
+        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
         return connection;
     }
 
     /// <inheritdoc />
     public async Task<int> ExecAsync(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        await using var connection = await CreateConnectionAsync(cancellationToken);
-        return await connection.ExecAsync(tsql, data, timeout, cancellationToken);
+        await using var connection = await CreateConnectionAsync(cancellationToken).ConfigureAwait(false);
+        return await connection.ExecAsync(tsql, data, timeout, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<T?> ExecAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        await using var connection = await CreateConnectionAsync(cancellationToken);
-        return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken);
+        await using var connection = await CreateConnectionAsync(cancellationToken).ConfigureAwait(false);
+        return await connection.ExecAsync<T?>(tsql, data, timeout, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<IEnumerable<T>> ReadAsync<T>(string tsql, object? data = default, int? timeout = default, CancellationToken cancellationToken = default)
     {
-        await using var connection = await CreateConnectionAsync(cancellationToken);
-        return await connection.ReadAsync<T>(tsql, data, timeout, cancellationToken);
+        await using var connection = await CreateConnectionAsync(cancellationToken).ConfigureAwait(false);
+        return await connection.ReadAsync<T>(tsql, data, timeout, cancellationToken).ConfigureAwait(false);
     }
 }

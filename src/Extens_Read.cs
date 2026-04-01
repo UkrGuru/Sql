@@ -43,8 +43,7 @@ public static partial class Extens
     /// <summary>
     /// Reads items asynchronously from a SQL data reader.
     /// </summary>
-    public static async IAsyncEnumerable<T> ReadAsync<T>(
-        this SqlCommand command,
+    public static async IAsyncEnumerable<T> ReadAsync<T>(this SqlCommand command,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         Results? result = null;
@@ -61,11 +60,7 @@ public static partial class Extens
     /// <summary>
     /// Executes a SQL query asynchronously and returns typed items.
     /// </summary>
-    public static async Task<IEnumerable<T>> ReadAsync<T>(
-        this SqlConnection connection,
-        string tsql,
-        object? data = default,
-        int? timeout = default,
+    public static async Task<IEnumerable<T>> ReadAsync<T>(this SqlConnection connection, string tsql, object? data = default, int? timeout = default,
         CancellationToken cancellationToken = default)
     {
         await using var command = connection.CreateCommand(tsql, data, timeout);

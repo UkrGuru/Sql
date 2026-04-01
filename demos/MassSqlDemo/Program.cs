@@ -104,25 +104,6 @@ class Utils {
         BEGIN
             TRUNCATE TABLE [dbo].[Students]
         END
-        
-        IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Students]') AND type in (N'U'))
-        BEGIN
-            CREATE TABLE [dbo].[Students](
-            	[ID] [int] NOT NULL,
-            	[Name] [varchar](50) NULL,
-            	[Class] [char](1) NULL,
-            	[Grade] [tinyint] NULL,
-            	CONSTRAINT [PK_Students] PRIMARY KEY CLUSTERED 
-            (
-            	[ID] ASC
-            )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-            ) ON [PRIMARY]
-        END
-        ELSE
-        BEGIN
-            TRUNCATE TABLE [dbo].[Students]
-        END
-        
         """);
         }
         catch (Exception ex)

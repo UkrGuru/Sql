@@ -37,10 +37,7 @@ public class Results
     /// <summary>
     /// Parses a value into a typed result.
     /// </summary>
-    public static T? Parse<T>(
-        object? value,
-        T? defaultValue = default,
-        JsonSerializerOptions? options = null)
+    public static T? Parse<T>(object? value, T? defaultValue = default, JsonSerializerOptions? options = null)
     {
         Type returnType = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
 
@@ -106,6 +103,7 @@ public class Results
     private static object? Deserialize(ReadOnlySpan<char> value, Type type, JsonSerializerOptions? options = null)
     {
         if (type == typeof(string)) return value.ToString();
+
         if (type == typeof(bool)) return bool.Parse(value);
         if (type == typeof(byte)) return byte.Parse(value, CultureInfo.InvariantCulture);
         if (type == typeof(short)) return short.Parse(value, CultureInfo.InvariantCulture);
@@ -123,6 +121,7 @@ public class Results
         if (type == typeof(TimeSpan)) return TimeSpan.Parse(value, CultureInfo.InvariantCulture);
 
         if (type == typeof(Guid)) return Guid.Parse(value);
+
         if (type == typeof(char)) return value[0];
         if (type == typeof(byte[])) return Convert.FromBase64String(value.ToString());
         if (type == typeof(char[])) return value.ToArray();

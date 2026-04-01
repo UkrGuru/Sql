@@ -1,4 +1,5 @@
-﻿using static UkrGuru.Sql.Tests.GlobalTests;
+﻿using System.Data;
+using static UkrGuru.Sql.Tests.GlobalTests;
 
 namespace UkrGuru.Sql.Tests;
 
@@ -165,5 +166,35 @@ public partial class DbHelperTests
         var item4 = DbHelper.Read<Person?>(@"SELECT Id, Name FROM TestItems WHERE Id = @Data", id).FirstOrDefault();
 
         Assert.Null(item4);
+    }
+
+    [Fact]
+    public async Task CreateCommandAsync_DisposesConnectionWithCommand()
+    {
+        // Arrange
+        var sql = "SELECT @Data;";
+        var data = new { Data = 123 };
+
+        // Act
+        var cmd = await DbHelper.CreateCommandAsync(sql, data, null);
+
+        // Assert: Command created
+        Assert.NotNull(cmd);
+        Assert.Equal(sql, cmd.CommandText);
+
+        // Assert: Connection is open
+        var conn = cmd.Connection;
+        Assert.NotNull(conn);
+        Assert.Equal(ConnectionState.Open, conn.State);
+
+        // Assert: Parameters populated
+        Assert.True(cmd.Parameters.Contains("@Data"));
+        Assert.Equal(123, cmd.Parameters["@Data"].Value);
+
+        // Act: Dispose command (should trigger connection.Dispose via event)
+        cmd.Dispose();
+
+        // Assert: Connection closed
+        Assert.Equal(ConnectionState.Closed, conn.State);
     }
 }
